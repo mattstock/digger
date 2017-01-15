@@ -143,14 +143,51 @@ short remap[] =
     0x38, 0x39, 'M' , 'J' , 'U' , '7' , '8' , 0x3f,
     0x40, 0x41, 'K' , 'I' , 'O' , '0' , '9' , 0x47,
     0x48, 0x49, 0x4a, 'L' , 0x4c, 'P' , '-' , 0x4f };
-    
-// look for keydown events and store
+
+bool leftpressed=FALSE,rightpressed=FALSE,uppressed=FALSE,downpressed=FALSE;
+
+// look for key events and store state based on press and release
 void keydown()
 {
   unsigned short ev;
-
+  
   if (keyboard_count() > 0) {
     ev = keyboard_getevent();
+
+    if (ev == 0x16b) {
+      leftpressed = TRUE;
+      return;
+    }
+    if (ev == 0x36b) {
+      leftpressed = FALSE;
+      return;
+    }
+    if (ev == 0x175) {
+      uppressed = TRUE;
+      return;
+    }
+    if (ev == 0x375) {
+      uppressed = FALSE;
+      return;
+    }
+    if (ev == 0x174) {
+      rightpressed = TRUE;
+      return;
+    }
+    if (ev == 0x374) {
+      rightpressed = FALSE;
+      return;
+    }
+    if (ev == 0x172) {
+      downpressed = TRUE;
+      return;
+    }
+    if (ev == 0x372) {
+      downpressed = FALSE;
+      return;
+    }
+
+    // only add to the queue if it's not left, right, up down
     if ((ev != 0) && ((ev & 0x200) == 0)) {
       if (klen == KBLEN)
 	memcpy(kbuffer, kbuffer+1, --klen);

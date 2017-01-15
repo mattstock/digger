@@ -191,8 +191,9 @@ int keycodes[17][5]={{RIGHTKEY,-2,-2,-2,-2},		/* 1 Right */
 
 #ifdef BEXKAT1
 
-bool leftpressed=FALSE,rightpressed=FALSE,uppressed=FALSE,downpressed=FALSE,
-  f1pressed=FALSE,left2pressed=FALSE,right2pressed=FALSE,up2pressed=FALSE,
+extern bool leftpressed,rightpressed,uppressed,downpressed;
+
+bool f1pressed=FALSE,left2pressed=FALSE,right2pressed=FALSE,up2pressed=FALSE,
   down2pressed=FALSE,f12pressed=FALSE;
 
 int keycodes[17][5]={{0x174,-2,-2,-2,-2},		/* 1 Right */
