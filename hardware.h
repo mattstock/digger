@@ -19,7 +19,7 @@ void s1restoreint8(void);
 
 void initkeyb(void);
 void restorekeyb(void);
-short getkey(void);
+unsigned short getkey(void);
 bool kbhit(void);
 
 void graphicsoff(void);

@@ -67,7 +67,7 @@ void makefield(void)
 void drawstatics(void)
 {
   short x,y;
-  printf("drawstatics()\n");
+  //printf("drawstatics()\n");
   for (x=0;x<MWIDTH;x++)
     for (y=0;y<MHEIGHT;y++)
       if (curplayer==0)
@@ -334,7 +334,7 @@ void drawsquareblob(short x,short y)
 void drawbackg(short l)
 {
   short x,y;
-  printf("drawbackg()\n");
+  //printf("drawbackg()\n");
   for (y=14;y<200;y+=4) {
     //    fillbuffer();
     for (x=0;x<320;x+=20)

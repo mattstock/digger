@@ -27,7 +27,7 @@ short wratio = 2;
 #define virt2scrh(h) (h*hratio)
 
 #define KBLEN		30
-short kbuffer[KBLEN];
+unsigned short kbuffer[KBLEN];
 short klen=0;
 
 typedef struct _sdl_surface {
@@ -112,17 +112,37 @@ SDL_Surface *ch2bmap(unsigned char *sprite, short w, short h)
   return tmp;
 }
 
+// this code assumes that most of the keyboard keys are
+// returned as ascii, which means I need to build a translation
+// from ps2 scan codes using a lut.  Since the elements I want aren't
+// contiguous, this list is bigger than it needs to be, but I'm aiming for
+// simplicity.
+short remap[] =
+  { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x09, 0x60, 0x0f,
+    0x10, 0x11, 0x12, 0x13, 0x14, 'Q' , '1' , 0x17,
+    0x18, 0x19, 'Z' , 'S' , 'A' , 'D' , '2' , 0x1f,
+    0x20, 'C' , 'X' , 'D' , 'E' , '4' , '3' , 0x27,
+    0x28, ' ' , 'V' , 'F' , 'T' , 'R' , '5' , 0x2f,
+    0x30, 'N' , 'B' , 'H' , 'G' , 'Y' , '6' , 0x37,
+    0x38, 0x39, 'M' , 'J' , 'U' , '7' , '8' , 0x3f,
+    0x40, 0x41, 'K' , 'I' , 'O' , '0' , '9' , 0x47,
+    0x48, 0x49, 0x4a, 'L' , 0x4c, 'P' , '-' , 0x4f };
+    
 // look for keydown events and store
 void keydown()
 {
-  unsigned int ev;
-  
+  unsigned short ev;
+
   if (keyboard_count() > 0) {
     ev = keyboard_getevent();
     if ((ev != 0) && ((ev & 0x200) == 0)) {
       if (klen == KBLEN)
 	memcpy(kbuffer, kbuffer+1, --klen);
-      kbuffer[klen++] = ev & 0x1ff;
+      if (ev < 80) {
+	kbuffer[klen++] = remap[ev];
+      } else
+	kbuffer[klen++] = ev;
     }
   }
 }
@@ -135,16 +155,16 @@ void restorekeyb(void)
 {
 }
 
-short getkey(void)
+unsigned short getkey(void)
 {
-	short result;
-	
-	while(kbhit() != TRUE)
-		gethrt();
-	result = kbuffer[0];
-	memcpy(kbuffer, kbuffer + 1, --klen);
-
-	return(result);
+  unsigned short result;
+  
+  while(kbhit() != TRUE)
+    gethrt();
+  result = kbuffer[0];
+  memcpy(kbuffer, kbuffer + 1, --klen);
+  // printf("getkey() = %04x\n", result);
+  return result;
 }
 
 bool kbhit(void)

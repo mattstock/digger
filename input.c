@@ -197,21 +197,21 @@ bool leftpressed=FALSE,rightpressed=FALSE,uppressed=FALSE,downpressed=FALSE,
 
 int keycodes[17][5]={{0x174,-2,-2,-2,-2},		/* 1 Right */
                      {0x175,-2,-2,-2,-2},		/* 1 Up */
-                     {0x166,-2,-2,-2,-2},		/* 1 Left */
+                     {0x16b,-2,-2,-2,-2},		/* 1 Left */
                      {0x172,-2,-2,-2,-2},		/* 1 Down */
-                     {0x4b,-2,-2,-2,-2},		/* 1 Fire */
-                     {0x1b,-2,-2,-2,-2},		/* 2 Right */
-                     {0x1d,-2,-2,-2,-2},		/* 2 Up */
-                     {0x1c,-2,-2,-2,-2},		/* 2 Left */
-                     {0x1a,-2,-2,-2,-2},		/* 2 Down */
-                     {0x16,-2,-2,-2,-2},		/* 2 Fire */
-                     {0x2c,-2,-2,-2,-2},		/* Cheat */
-                     {0x55,-2,-2,-2,-2},	/* Accelerate */
-                     {0x4e,-2,-2,-2,-2},	/* Brake */
+                     {'L',-2,-2,-2,-2},		/* 1 Fire */
+                     {'A',-2,-2,-2,-2},		/* 2 Right */
+                     {'W',-2,-2,-2,-2},		/* 2 Up */
+                     {'S',-2,-2,-2,-2},		/* 2 Left */
+                     {'D',-2,-2,-2,-2},		/* 2 Down */
+                     {'1',-2,-2,-2,-2},		/* 2 Fire */
+                     {'T',-2,-2,-2,-2},		/* Cheat */
+                     {'P',-2,-2,-2,-2},	/* Accelerate */
+                     {'O',-2,-2,-2,-2},	/* Brake */
                      {0x83,-2,-2,-2,-2},		/* Music */
                      {0x01,-2,-2,-2,-2},		/* Sound */
                      {0x09,-2,-2,-2,-2},		/* Exit */
-                     {0x29,-2,-2,-2,-2}};		/* Pause */
+                     {' ',-2,-2,-2,-2}};		/* Pause */
 
 #define ASCIIF8 (0x08)
 
@@ -364,7 +364,7 @@ void readjoy(void);
    other way around. */
 void checkkeyb(void)
 {
-  int i,j,k=0;
+  int i,k=0;
   bool *aflagp[10]={&arightpressed,&auppressed,&aleftpressed,&adownpressed,
                     &af1pressed,&aright2pressed,&aup2pressed,&aleft2pressed,
                     &adown2pressed,&af12pressed};
@@ -391,16 +391,12 @@ void checkkeyb(void)
 
   while (kbhit()) {
     akeypressed=getkey();
-    printf("akeypressed = %04x\n", akeypressed);
     for (i=0;i<10;i++)
-      for (j=2;j<5;j++)
-        if (akeypressed==keycodes[i][j])
-          *aflagp[i]=TRUE;
+      if (akeypressed==keycodes[i][0])
+	*aflagp[i]=TRUE;
     for (i=10;i<17;i++)
-      for (j=0;j<5;j++)
-        if (akeypressed==keycodes[i][j])
-          k=i;
-    printf("k = %d\n", k);
+      if (akeypressed==keycodes[i][0])
+	k=i;
     switch (k) {
       case 10: /* Cheat! */
         if (!gauntlet) {

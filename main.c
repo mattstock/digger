@@ -551,7 +551,6 @@ short levplan(void)
   short l=levno();
   if (l>8)
     l=(l&3)+5; /* Level plan: 12345678, 678, (5678) 247 times, 5 forever */
-  printf("levplan() = %d\n", l);
   return l;
 }
 
