@@ -57,7 +57,7 @@ void inir(void);
 void redefkeyb(bool allf);
 int getalllives(void);
 
-Sint3 leveldat[8][MHEIGHT][MWIDTH]=
+char leveldat[8][MHEIGHT][MWIDTH]=
 {{"S   B     HHHHS",
   "V  CC  C  V B  ",
   "VB CC  C  V    ",
@@ -139,10 +139,12 @@ Sint3 leveldat[8][MHEIGHT][MWIDTH]=
   "VCCCCCV VCCCCCV",
   "HHHHHHHHHHHHHHH"}};
 
-Sint4 getlevch(Sint4 x,Sint4 y,Sint4 l)
+char getlevch(Sint4 x,Sint4 y,Sint4 l)
 {
+  printf("getlevch()\n");
   if ((l==3 || l==4) && !levfflag && diggers==2 && y==9 && (x==6 || x==8))
     return 'H';
+  printf("getlevch(%d, %d, %d) = %c\n", x,y,l,leveldat[l-1][y][x]);
   return leveldat[l-1][y][x];
 }
 
@@ -161,6 +163,7 @@ void game(void)
     cgtime=gtime*1193181l;
     timeout=FALSE;
   }
+  printf("game()\n");
   initlives();
   gamedat[0].level=startlev;
   if (nplayers==2)
@@ -176,8 +179,16 @@ void game(void)
   if (nplayers==2)
     flashplayer=TRUE;
   curplayer=0;
+  printf("going to start loop (lives = %d)\n", getalllives());
+  if (timeout)
+    printf("timeout!\n");
+  if (escape)
+    printf("escape\n");
+  if (alldead)
+    printf("alldead!\n");
   while (getalllives()!=0 && !escape && !timeout) {
     while (!alldead && !escape && !timeout) {
+      printf("in loop\n");
       initmbspr();
 
       if (playing)
@@ -321,7 +332,7 @@ int main(int argc,char *argv[])
 
 int mainprog(void)
 {
-  Sint4 frame,t,x;
+  Sint4 frame,t,x=0;
   loadscores();
 #ifdef _WINDOWS
   show_main_menu();
@@ -339,7 +350,6 @@ int mainprog(void)
     started=FALSE;
     frame=0;
     newframe();
-    while (1);
     teststart();
     while (!started) {
       started=teststart();
@@ -491,8 +501,11 @@ void switchnplayers(void)
 void initlevel(void)
 {
   gamedat[curplayer].levdone=FALSE;
+  printf("makefield()\n");
   makefield();
+  printf("makeemfield()\n");
   makeemfield();
+  printf("initbags()\n");
   initbags();
   levnotdrawn=TRUE;
 }
@@ -538,6 +551,7 @@ Sint4 levplan(void)
   Sint4 l=levno();
   if (l>8)
     l=(l&3)+5; /* Level plan: 12345678, 678, (5678) 247 times, 5 forever */
+  printf("levplan() = %d\n", l);
   return l;
 }
 
@@ -593,7 +607,7 @@ Uint4 sound_device,sound_port,sound_irq,sound_dma,sound_rate,sound_length;
 void parsecmd(int argc,char *argv[])
 {
   char *word;
-  Sint4 arg,i,j,speedmul;
+  Sint4 arg,i=0,j,speedmul;
   bool sf,gs=FALSE,norepf=FALSE;
   FILE *levf;
 
@@ -603,11 +617,12 @@ void parsecmd(int argc,char *argv[])
       if (word[1]=='L' || word[1]=='l' || word[1]=='R' || word[1]=='r' ||
           word[1]=='P' || word[1]=='p' || word[1]=='S' || word[1]=='s' ||
           word[1]=='E' || word[1]=='e' || word[1]=='G' || word[1]=='g' ||
-          word[1]=='A' || word[1]=='a' || word[1]=='I' || word[1]=='i')
+          word[1]=='A' || word[1]=='a' || word[1]=='I' || word[1]=='i') {
         if (word[2]==':')
           i=3;
         else
           i=2;
+      }
       if (word[1]=='L' || word[1]=='l') {
         j=0;
         while (word[i]!=0)
@@ -640,7 +655,7 @@ void parsecmd(int argc,char *argv[])
         gs=TRUE;
       }
       if (word[1]=='I' || word[1]=='i')
-        sscanf(word+i,"%u",&startlev);
+        sscanf(word+i,"%hu",&startlev);
       if (word[1]=='U' || word[1]=='u')
         unlimlives=TRUE;
 #ifndef _WINDOWS        
@@ -706,13 +721,14 @@ void parsecmd(int argc,char *argv[])
         ginit();
         gpal(0);
       }
-      if (word[1]=='K' || word[1]=='k')
+      if (word[1]=='K' || word[1]=='k') {
         if (word[2]=='A' || word[2]=='a')
           redefkeyb(TRUE);
         else
           redefkeyb(FALSE);
+      }
       if (word[1]=='A' || word[1]=='a') {
-        sscanf(word+i,"%u,%x,%u,%u,%u,%u",&sound_device,&sound_port,&sound_irq,
+        sscanf(word+i,"%hu,%hx,%hu,%hu,%hu,%hu",&sound_device,&sound_port,&sound_irq,
                &sound_dma,&sound_rate,&sound_length);
         killsound();
         volume=1;

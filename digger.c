@@ -153,7 +153,7 @@ void dodigger(void)
       drawexplosion(n);
     else
       updatefire(n);
-    if (digvisible)
+    if (digvisible) {
       if (digdat[n].alive)
         if (digdat[n].bagtime!=0) {
           drawdig(n,digdat[n].mdir,digdat[n].x,digdat[n].y,
@@ -165,6 +165,7 @@ void dodigger(void)
           updatedigger(n);
       else
         diggerdie(n);
+    }
     if (digdat[n].emocttime>0)
       digdat[n].emocttime--;
   }
@@ -203,7 +204,7 @@ void dodigger(void)
 
 void updatefire(int n)
 {
-  Sint4 pix;
+  Sint4 pix = 0;
   int clfirst[TYPES],clcoll[SPRITES],i;
   bool clflag;
   if (digdat[n].notfiring) {

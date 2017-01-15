@@ -176,7 +176,7 @@ bool subcarry(Uint4 *dest,Uint4 sub)
 samp getsample(void)
 {
   bool f=FALSE,t2sw0;
-  Uint4 spkrt2,noi8,complicate=0,not2;
+  Uint4 spkrt2=0,noi8=0,complicate=0,not2=0;
 
   if (subcarry(&t2v,rate)) {
     not2=t2v+rate; /* Amount of time that went by before change */
@@ -207,7 +207,7 @@ samp getsample(void)
 
   if (i8flag && i8pulse<=0) {
     f=TRUE;
-    if (spkrmode!=0)
+    if (spkrmode!=0) {
       if (spkrmode!=1)
         t2sw=!t2sw;
       else {
@@ -215,6 +215,7 @@ samp getsample(void)
         t2sw=TRUE;
         f=FALSE;
       }
+    }
   }
 
   if (i8pulse>0) {

@@ -10,6 +10,7 @@
 #ifdef _SDL
 #include <SDL.h>
 #endif
+#include <stdio.h>
 
 bool escape=FALSE,firepflag=FALSE,aleftpressed=FALSE,arightpressed=FALSE,
      auppressed=FALSE,adownpressed=FALSE,start=FALSE,af1pressed=FALSE;
@@ -188,6 +189,34 @@ int keycodes[17][5]={{RIGHTKEY,-2,-2,-2,-2},		/* 1 Right */
 
 #else
 
+#ifdef BEXKAT1
+
+bool leftpressed=FALSE,rightpressed=FALSE,uppressed=FALSE,downpressed=FALSE,
+  f1pressed=FALSE,left2pressed=FALSE,right2pressed=FALSE,up2pressed=FALSE,
+  down2pressed=FALSE,f12pressed=FALSE;
+
+int keycodes[17][5]={{0x174,-2,-2,-2,-2},		/* 1 Right */
+                     {0x175,-2,-2,-2,-2},		/* 1 Up */
+                     {0x166,-2,-2,-2,-2},		/* 1 Left */
+                     {0x172,-2,-2,-2,-2},		/* 1 Down */
+                     {0x4b,-2,-2,-2,-2},		/* 1 Fire */
+                     {0x1b,-2,-2,-2,-2},		/* 2 Right */
+                     {0x1d,-2,-2,-2,-2},		/* 2 Up */
+                     {0x1c,-2,-2,-2,-2},		/* 2 Left */
+                     {0x1a,-2,-2,-2,-2},		/* 2 Down */
+                     {0x16,-2,-2,-2,-2},		/* 2 Fire */
+                     {0x2c,-2,-2,-2,-2},		/* Cheat */
+                     {0x55,-2,-2,-2,-2},	/* Accelerate */
+                     {0x4e,-2,-2,-2,-2},	/* Brake */
+                     {0x83,-2,-2,-2,-2},		/* Music */
+                     {0x01,-2,-2,-2,-2},		/* Sound */
+                     {0x09,-2,-2,-2,-2},		/* Exit */
+                     {0x29,-2,-2,-2,-2}};		/* Pause */
+
+#define ASCIIF8 (0x08)
+
+#else
+
 #ifdef _SDL
 
 bool GetAsyncKeyState(int);
@@ -251,6 +280,7 @@ int keycodes[17][5]={{0x4d,0xcd,0x14d,-2,-2}, /* 1 Right */
 
 #define ASCIIF8 322
 
+#endif
 #endif
 #endif
 #endif
@@ -361,6 +391,7 @@ void checkkeyb(void)
 
   while (kbhit()) {
     akeypressed=getkey();
+    printf("akeypressed = %04x\n", akeypressed);
     for (i=0;i<10;i++)
       for (j=2;j<5;j++)
         if (akeypressed==keycodes[i][j])
@@ -369,6 +400,7 @@ void checkkeyb(void)
       for (j=0;j<5;j++)
         if (akeypressed==keycodes[i][j])
           k=i;
+    printf("k = %d\n", k);
     switch (k) {
       case 10: /* Cheat! */
         if (!gauntlet) {

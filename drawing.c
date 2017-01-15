@@ -36,7 +36,6 @@ void outtext(char *p,Sint4 x,Sint4 y,Sint4 c)
 {
   Sint4 i;
   for (i=0;p[i];i++) {
-    printf("gwrite(%d, %d, %c)\n", x, y, p[i]);
     gwrite(x,y,p[i],c);
     x+=12;
   }
@@ -44,11 +43,16 @@ void outtext(char *p,Sint4 x,Sint4 y,Sint4 c)
 
 void makefield(void)
 {
-  Sint4 c,x,y;
+  char c;
+  Sint4 t,x,y;
   for (x=0;x<MWIDTH;x++)
     for (y=0;y<MHEIGHT;y++) {
+      
       field[y*MWIDTH+x]=-1;
-      c=getlevch(x,y,levplan());
+      t = levplan();
+      printf("calling getlevch(%d,%d,%d)\n", x,y,t);
+      c=getlevch(x,y,t);
+      printf("[%d,%d] = %c\n", x, y, c);
       if (c=='S' || c=='V')
         field[y*MWIDTH+x]&=0xd03f;
       if (c=='S' || c=='H')
@@ -63,6 +67,7 @@ void makefield(void)
 void drawstatics(void)
 {
   Sint4 x,y;
+  printf("drawstatics()\n");
   for (x=0;x<MWIDTH;x++)
     for (y=0;y<MHEIGHT;y++)
       if (curplayer==0)
@@ -329,8 +334,9 @@ void drawsquareblob(Sint4 x,Sint4 y)
 void drawbackg(Sint4 l)
 {
   Sint4 x,y;
+  printf("drawbackg()\n");
   for (y=14;y<200;y+=4) {
-    fillbuffer();
+    //    fillbuffer();
     for (x=0;x<320;x+=20)
       drawmiscspr(x,y,93+l,5,4);
   }

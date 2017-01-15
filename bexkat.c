@@ -108,8 +108,7 @@ SDL_Surface *ch2bmap(Uint3 *sprite, Sint4 w, Sint4 h)
       tmp->pixels[y*realw+x] = sprite[y*realw+x];
     }
   }
-  printf("\n");
-    
+      
   return tmp;
 }
 
@@ -123,7 +122,7 @@ void keydown()
     if ((ev != 0) && ((ev & 0x200) == 0)) {
       if (klen == KBLEN)
 	memcpy(kbuffer, kbuffer+1, --klen);
-      kbuffer[klen++] = ev & 0xff;
+      kbuffer[klen++] = ev & 0x1ff;
     }
   }
 }
@@ -278,10 +277,10 @@ void vgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
   SDL_Surface *tmp;
   SDL_Rect src;
 
-  printf("vgageti(%d, %d, %d, %d)\n", x, y, w, h);
+  //  printf("vgageti(%d, %d, %d, %d)\n", x, y, w, h);
   memcpy(&tmp, p, (sizeof(SDL_Surface *)));
   if (tmp != NULL) {
-    printf("given a non-NULL reference\n");
+    //    printf("given a non-NULL reference\n");
     freesurface(tmp);
   }
 

@@ -1,4 +1,4 @@
-Sint4 getlevch(Sint4 bp6,Sint4 bp8,Sint4 bpa);
+char getlevch(Sint4 bp6,Sint4 bp8,Sint4 bpa);
 void incpenalty(void);
 Sint4 levplan(void);
 Sint4 levof10(void);
@@ -15,6 +15,6 @@ extern bool levfflag;
 extern char levfname[];
 extern char pldispbuf[];
 extern Sint5 randv;
-extern Sint3 leveldat[8][10][15];
+extern char leveldat[8][10][15];
 extern int gtime;
 extern bool gauntlet,timeout,synchvid,unlimlives;

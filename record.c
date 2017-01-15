@@ -249,6 +249,7 @@ char maked(Sint4 dir,bool fire)
 
 void putrun(void)
 {
+#ifndef BEXKAT
   if (recrl>1)
     mprintf("%c%i",recd,recrl);
   else
@@ -266,6 +267,7 @@ void putrun(void)
     mprintf("\n");
     reccc=0;
   }
+#endif
 }
 
 void recputdir(Sint4 dir,bool fire)
@@ -292,6 +294,7 @@ void recinit(void)
   int x,y,l;
   recp=0;
   drfvalid=TRUE;
+#ifndef BEXKAT
   mprintf("DRF\n"); /* Required at start of DRF */
   if (kludge)
     mprintf("AJ DOS 19981125\n");
@@ -319,17 +322,21 @@ void recinit(void)
       mprintf("\n");
     }
   }
+#endif
   reccc=recrl=0;
 }
 
 void recputrand(Uint5 randv)
 {
+#ifndef BEXKAT
   mprintf("%08lX\n",randv);
+#endif
   reccc=recrl=0;
 }
 
 void recsavedrf(void)
 {
+#ifndef BEXKAT
   FILE *recf;
   Uint5 i;
   int j;
@@ -337,11 +344,12 @@ void recsavedrf(void)
   char nambuf[80],init[4];
   if (!drfvalid)
     return;
-  if (gotname)
+  if (gotname) {
     if ((recf=fopen(rname,"wt"))==NULL)
       gotname=FALSE;
     else
       gotfile=TRUE;
+  }
   if (!gotname) {
     if (nplayers==2)
       recf=fopen(DEFAULTSN,"wt"); /* Should get a name, really */
@@ -378,6 +386,7 @@ void recsavedrf(void)
   for (i=0;i<recp;i++)
     fputc(recb[i],recf);
   fclose(recf);
+#endif
 }
 
 void playskipeol(void)
@@ -406,21 +415,27 @@ Uint5 playgetrand(void)
 
 void recputinit(char *init)
 {
+#ifndef BEXKAT
   mprintf("*%c%c%c\n",init[0],init[1],init[2]);
+#endif
 }
 
 void recputeol(void)
 {
   if (recrl>0)
     putrun();
+#ifndef BEXKAT
   if (reccc>0)
     mprintf("\n");
   mprintf("EOL\n");
+#endif
 }
 
 void recputeog(void)
 {
+#ifndef BEXKAT
   mprintf("EOG\n");
+#endif
 }
 
 void recname(char *name)
