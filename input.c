@@ -405,11 +405,11 @@ void checkkeyb(void)
         }
         break;
       case 11: /* Increase speed */
-        if (ftime>10000l)
-          ftime-=10000l;
+        if (ftime>10000)
+          ftime-=10000;
         break;
       case 12: /* Decrease speed */
-        ftime+=10000l;
+        ftime+=10000;
         break;
       case 13: /* Toggle music */
         musicflag=!musicflag;

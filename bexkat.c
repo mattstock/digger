@@ -6,11 +6,18 @@
 #include <vga.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <keyboard.h>
+#include <timers.h>
 
 extern unsigned char *vgatable[];
 extern unsigned char *ascii2vga[];
+extern unsigned int ftime;
+unsigned int prev;
+
+void doscreenupdate();
+
 extern void gettitle(unsigned char *buf);
 
 unsigned char **sprites = vgatable;
@@ -36,12 +43,31 @@ typedef struct _sdl_surface {
   unsigned char *pixels;
 } SDL_Surface;
 
+typedef struct _myrect {
+  unsigned short int x;
+  unsigned short int y;
+  unsigned short int w;
+  unsigned short int h;
+} SDL_Rect;
+
+typedef struct _transactions {
+  struct _transactions *p;
+  struct _transactions *n;
+  SDL_Rect rect;
+} Transactions;
+
 typedef struct _sdl_color {
   unsigned char r;
   unsigned char g;
   unsigned char b;
   unsigned char a;
 } SDL_Color;
+
+// master copy of the screen buffer.  we track the modified rectangles on
+// this and periodically dump the result to the frame buffer.
+SDL_Surface *screen = NULL;
+Transactions *First = NULL, *Last = NULL;
+unsigned int pendnum = 0;
 
 /* palette1, normal intensity */
 SDL_Color vga16_pal1[] = \
@@ -67,13 +93,6 @@ SDL_Color vga16_pal2i[] = \
 SDL_Color *npalettes[] = {vga16_pal1, vga16_pal2};
 SDL_Color *ipalettes[] = {vga16_pal1i, vga16_pal2i};
 short	currpal=0;
-
-typedef struct _myrect {
-  unsigned short int x;
-  unsigned short int y;
-  unsigned short int w;
-  unsigned short int h;
-} SDL_Rect;
 
 SDL_Surface *createsurface(short w, short h) {
   SDL_Surface *tmp;
@@ -103,11 +122,7 @@ SDL_Surface *ch2bmap(unsigned char *sprite, short w, short h)
   realw = virt2scrw(w*4);
   realh = virt2scrh(h);
   tmp = createsurface(realw, realh);
-  for (int y=0; y < realh; y++) {
-    for (int x=0; x < realw; x++) {
-      tmp->pixels[y*realw+x] = sprite[y*realw+x];
-    }
-  }
+  memcpy(tmp->pixels, sprite, realh*realw);
       
   return tmp;
 }
@@ -170,7 +185,8 @@ unsigned short getkey(void)
 bool kbhit(void)
 {
   keydown();
-
+  doscreenupdate();
+  
   if (klen > 0)
     return(TRUE);
   else
@@ -188,7 +204,23 @@ int getlrt(void)
 
 unsigned int gethrt(void)
 {
-	return(0);
+  int delta;
+  unsigned int tt = timers_ticks();
+
+  doscreenupdate();
+  if (prev == 0 || prev > tt) {
+    prev = tt;
+  } else {
+    delta = (ftime/1000 - (tt - prev));
+    if (delta > 0) {
+      // this is a gross spinwait, but it should work
+      while (tt < prev+delta && tt > prev) {
+	tt = timers_ticks();
+      };
+    }
+    prev = timers_ticks();
+  }
+  return(0);
 }
 
 int getkips(void)
@@ -198,6 +230,7 @@ int getkips(void)
 
 void vgainit() {
   vga_set_mode(VGA_MODE_NORMAL);
+  screen = createsurface(640,400);
   printf("Digger\n");
 }
 
@@ -276,20 +309,38 @@ void vgaputim(short x, short y, short ch, short w, short h)
   freesurface(scr);
 }
 
-void blitfromfb(SDL_Rect *bb, unsigned char *to) {
+void fbwrite(unsigned short x, unsigned short y, unsigned short w, unsigned short h) {
+  for (int a=0; a < w; a++)
+    for (int b=0; b < h; b++)
+      vga_fb[(y+b)*VGA_MAX_X+x+a] = screen->pixels[(y+b)*VGA_MAX_X+x+a];
+}
+
+void blitfromscreen(SDL_Rect *bb, unsigned char *to) {
   for (int x=0; x < bb->w; x++) {
     for (int y=0; y < bb->h; y++) {
-      to[y*bb->w+x] = vga_fb[(bb->y+y)*VGA_MAX_X+bb->x+x];
+      to[y*bb->w+x] = screen->pixels[(bb->y+y)*VGA_MAX_X+bb->x+x];
     }
   }
 }
 
-void blittofb(SDL_Rect *bb, unsigned char *from) {
+void blittoscreen(SDL_Rect *bb, unsigned char *from) {
   for (int x=0; x < bb->w; x++) {
     for (int y=0; y < bb->h; y++) {
-      vga_fb[(bb->y+y)*VGA_MAX_X+bb->x+x] = from[y*bb->w+x];
+      screen->pixels[(bb->y+y)*VGA_MAX_X+bb->x+x] = from[y*bb->w+x];
     }
   }
+}
+
+void doscreenupdate() {
+  Transactions *node;
+
+  for (node=First; node !=NULL;) {
+    fbwrite(node->rect.x, node->rect.y, node->rect.w, node->rect.h);
+    First = node->n;
+    free(node);
+    node = First;
+  }
+  pendnum = 0;
 }
 
 void vgageti(short x, short y, unsigned char *p, short w, short h)
@@ -310,24 +361,56 @@ void vgageti(short x, short y, unsigned char *p, short w, short h)
   src.w = virt2scrw(w*4);
   
   tmp = createsurface(src.w, src.h);
-  blitfromfb(&src, tmp->pixels);
+  blitfromscreen(&src, tmp->pixels);
   memcpy(p, &tmp, (sizeof(SDL_Surface *)));
 }
 
 void vgaputi(short x, short y, unsigned char *p, short w, short h)
 {
   SDL_Surface *tmp;
-  SDL_Rect src;
+  Transactions *new, *ptr;
 
   //  printf("vgaputi(%d, %d, %d, %d)\n", x, y, w, h);
-  
-  src.x = virt2scrx(x);
-  src.y = virt2scry(y);
-  src.h = virt2scrh(h);
-  src.w = virt2scrw(w*4);
+  new = malloc(sizeof(Transactions));
+  new->rect.x = virt2scrx(x);
+  new->rect.y = virt2scry(y);
+  new->rect.w = virt2scrw(w*4);
+  new->rect.h = virt2scrh(h);
+  new->n = NULL;
+  new->p = NULL;
   
   memcpy(&tmp, p, (sizeof(SDL_Surface *)));
-  blittofb(&src, tmp->pixels);
+  blittoscreen(&(new->rect), tmp->pixels);
+
+  for (ptr=First;ptr!=NULL;ptr=ptr->n) {
+    if ((new->rect.x >= ptr->rect.x) &&
+	(new->rect.y >= ptr->rect.y) &&
+	((new->rect.x+new->rect.w) <= (ptr->rect.x+ptr->rect.w)) &&
+	((new->rect.y+new->rect.h) <= (ptr->rect.y+ptr->rect.h))) {
+      free(new);
+      return;
+    } else if ((new->rect.x <= ptr->rect.x) &&
+	       (new->rect.y <= ptr->rect.y) &&
+	       ((new->rect.x+new->rect.w) >= (ptr->rect.x+ptr->rect.w)) &&
+	       ((new->rect.y+new->rect.h) >= (ptr->rect.y+ptr->rect.h))) {
+      ptr->rect.x = new->rect.x;
+      ptr->rect.y = new->rect.y;
+      ptr->rect.w = new->rect.w;
+      ptr->rect.h = new->rect.h;
+      free(new);
+      return;
+    }
+  }
+  
+  if (pendnum == 0)
+    First = new;
+  else {
+    Last->n = new;
+    new->p = Last;
+  }
+
+  Last = new;
+  pendnum++;
 }
 
 void vgaclear(void)

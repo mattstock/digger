@@ -650,7 +650,7 @@ void parsecmd(int argc,char *argv[])
         speedmul=0;
         while (word[i]!=0)
           speedmul=10*speedmul+word[i++]-'0';
-        ftime=speedmul*2000l;
+        ftime=speedmul*2000;
         gs=TRUE;
       }
       if (word[1]=='I' || word[1]=='i')
@@ -776,7 +776,7 @@ void parsecmd(int argc,char *argv[])
         while (word[j]!=0)
           speedmul=10*speedmul+word[j++]-'0';
         gs=TRUE;
-        ftime=speedmul*2000l;
+        ftime=speedmul*2000;
       }
       else {
         j=0;
@@ -846,7 +846,7 @@ void inir(void)
     }
   }
   gtime=(int)GetINIInt(INI_GAME_SETTINGS,"GauntletTime",120,ININAME);
-  ftime=GetINIInt(INI_GAME_SETTINGS,"Speed",80000l,ININAME);
+  ftime=GetINIInt(INI_GAME_SETTINGS,"Speed", 120000,ININAME);
   gauntlet=GetINIBool(INI_GAME_SETTINGS,"GauntletMode",FALSE,ININAME);
   GetINIString(INI_GAME_SETTINGS,"Players","1",vbuf,80,ININAME);
   strupr(vbuf);
