@@ -302,19 +302,19 @@ void maininit(void)
   calibrate();
   ginit();
   gpal(0);
-  setretr(TRUE);
   initkeyb();
   detectjoy();
   inir();
   initsound();
-  recstart();
+  //  recstart();
 }
 
 #ifndef _WINDOWS
 int main(int argc,char *argv[])
 {
   maininit();
-  parsecmd(argc,argv);
+  //  parsecmd(argc,argv);
+  printf("maininit() complete\n");
   return mainprog();
 }
 #endif
@@ -322,6 +322,7 @@ int main(int argc,char *argv[])
 int mainprog(void)
 {
   Sint4 frame,t,x;
+  printf("starting loadscores()\n");
   loadscores();
 #ifdef _WINDOWS
   show_main_menu();
@@ -329,8 +330,10 @@ int mainprog(void)
   escape=FALSE;
   do {
     soundstop();
+    printf("starting creatembspr()\n");
     creatembspr();
-    detectjoy();
+    //    detectjoy();
+    printf("starting gclear()\n");
     gclear();
     gtitle();
     outtext("D I G G E R",100,0,3);
@@ -339,6 +342,7 @@ int mainprog(void)
     started=FALSE;
     frame=0;
     newframe();
+    while (1);
     teststart();
     while (!started) {
       started=teststart();

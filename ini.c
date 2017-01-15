@@ -27,6 +27,7 @@ char *sgets(char *buffer,char *s)
 
 void WriteINIString(char *section,char *key,char *value,char *filename)
 {
+#if 0
   FILE *fp;
   char *buffer,*p,*p0,s1[80],s2[80],s3[80];
   int tl;
@@ -101,11 +102,13 @@ void WriteINIString(char *section,char *key,char *value,char *filename)
   fclose(fp);
   free(buffer);
   return;
+#endif
 }
 
 void GetINIString(char *section,char *key,char *def,char *dest,
                              int destsize,char *filename)
 {
+#if 0
   FILE *fp;
   char s1[80],s2[80],s3[80];
   strcpy(dest,def);
@@ -133,6 +136,7 @@ void GetINIString(char *section,char *key,char *def,char *dest,
     }
   } while (!feof(fp) && !ferror(fp));
   fclose(fp);
+#endif
 }
 
 Sint5 GetINIInt(char *section,char *key,Sint5 def,char *filename)
@@ -148,7 +152,7 @@ void WriteINIInt(char *section,char *key,Sint5 value,
 {
   char buf[80];
   sprintf(buf,"%li",value);
-  WriteINIString(section,key,buf,filename);
+  //  WriteINIString(section,key,buf,filename);
 }
 
 bool GetINIBool(char *section,char *key,bool def,char *filename)

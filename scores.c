@@ -117,7 +117,7 @@ void initscores(void)
 void loadscores(void)
 {
   Sint4 p=0,i,x;
-  readscores();
+  //  readscores();
   if (gauntlet)
     p=111;
   if (diggers==2)
@@ -269,7 +269,7 @@ void savescores(void)
     for (j=0;j<11;j++)
       scorebuf[p+j+i*11-10]=hsbuf[j];
   }
-  writescores();
+  // writescores();
 }
 
 void getinitials(void)
