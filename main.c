@@ -141,10 +141,10 @@ char leveldat[8][MHEIGHT][MWIDTH]=
 
 char getlevch(Sint4 x,Sint4 y,Sint4 l)
 {
-  printf("getlevch()\n");
+  //  printf("getlevch()\n");
   if ((l==3 || l==4) && !levfflag && diggers==2 && y==9 && (x==6 || x==8))
     return 'H';
-  printf("getlevch(%d, %d, %d) = %c\n", x,y,l,leveldat[l-1][y][x]);
+  //  printf("getlevch(%d, %d, %d) = %c\n", x,y,l,leveldat[l-1][y][x]);
   return leveldat[l-1][y][x];
 }
 

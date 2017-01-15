@@ -50,9 +50,9 @@ void makefield(void)
       
       field[y*MWIDTH+x]=-1;
       t = levplan();
-      printf("calling getlevch(%d,%d,%d)\n", x,y,t);
+      //      printf("calling getlevch(%d,%d,%d)\n", x,y,t);
       c=getlevch(x,y,t);
-      printf("[%d,%d] = %c\n", x, y, c);
+      //      printf("[%d,%d] = %c\n", x, y, c);
       if (c=='S' || c=='V')
         field[y*MWIDTH+x]&=0xd03f;
       if (c=='S' || c=='H')
