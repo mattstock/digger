@@ -269,8 +269,6 @@ void game(void)
         playskipeol();
       if (escape)
         recputeog();
-      if (gamedat[curplayer].levdone)
-        soundlevdone();
       if (countem()==0 || gamedat[curplayer].levdone) {
 #ifdef INTDRF
         fprintf(info,"%i\n",frame);
