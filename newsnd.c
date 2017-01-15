@@ -16,16 +16,16 @@
    giving half of the buffer at once to the DMA driver may be a good idea. */
 
 samp *buffer;
-Uint4 firsts,last,size;           /* data available to output device */
+unsigned short firsts,last,size;           /* data available to output device */
 
 int rate;
-Uint4 t0rate,t2rate,t2new,t0v,t2v;
-Sint4 i8pulse=0;
+unsigned short t0rate,t2rate,t2new,t0v,t2v;
+short i8pulse=0;
 bool t2f=FALSE,t2sw,i8flag=FALSE;
 samp lut[257];
-Uint4 pwlut[51];
+unsigned short pwlut[51];
 
-extern Sint4 spkrmode,pulsewidth;
+extern short spkrmode,pulsewidth;
 
 samp getsample(void);
 
@@ -47,14 +47,14 @@ samp getsample(void);
    to take into account. bufsize should also be a power of 2.
 */
 
-void soundinitglob(int port,int irq,int dma,Uint4 bufsize,Uint4 samprate)
+void soundinitglob(int port,int irq,int dma,unsigned short bufsize,unsigned short samprate)
 {
   int i;
   setsounddevice(port,irq,dma,samprate,bufsize);
 #ifndef _WINDOWS
   buffer=malloc((bufsize<<1)*sizeof(samp));
 #endif
-  rate=(int)(0x1234ddul/(Uint5)samprate);
+  rate=(int)(0x1234ddul/(unsigned long)samprate);
   firsts=0;
   last=1;
   size=bufsize<<1;
@@ -103,7 +103,7 @@ void s1fillbuffer(void)
    try to mess with, or even understand, the following. I don't understand most
    of it myself, and I wrote it. */
 
-void s1settimer2(Uint4 t2)
+void s1settimer2(unsigned short t2)
 {
   if (t2==40)
     t2=rate;   /* Otherwise aliasing would cause noise artifacts */
@@ -121,17 +121,17 @@ void s1setspkrt2(void)
   t2sw=TRUE;
 }
 
-void s1settimer0(Uint4 t0)
+void s1settimer0(unsigned short t0)
 {
   t0v=t0rate=t0;
 }
 
-void s1timer0(Uint4 t0)
+void s1timer0(unsigned short t0)
 {
   t0rate=t0;
 }
 
-void s1timer2(Uint4 t2)
+void s1timer2(unsigned short t2)
 {
   if (t2==40)
     t2=rate;    /* Otherwise aliasing would cause noise artifacts */
@@ -140,7 +140,7 @@ void s1timer2(Uint4 t2)
   t2v=t2rate;
 }
 
-bool addcarry(Uint4 *dest,Uint4 add)
+bool addcarry(unsigned short *dest,unsigned short add)
 {
   *dest+=add;
   if (*dest<add)
@@ -148,10 +148,10 @@ bool addcarry(Uint4 *dest,Uint4 add)
   return FALSE;
 }
 
-bool subcarry(Uint4 *dest,Uint4 sub)
+bool subcarry(unsigned short *dest,unsigned short sub)
 {
   *dest-=sub;
-  if (*dest>=(Uint4)(-sub))
+  if (*dest>=(unsigned short)(-sub))
     return TRUE;
   return FALSE;
 }
@@ -176,7 +176,7 @@ bool subcarry(Uint4 *dest,Uint4 sub)
 samp getsample(void)
 {
   bool f=FALSE,t2sw0;
-  Uint4 spkrt2=0,noi8=0,complicate=0,not2=0;
+  unsigned short spkrt2=0,noi8=0,complicate=0,not2=0;
 
   if (subcarry(&t2v,rate)) {
     not2=t2v+rate; /* Amount of time that went by before change */

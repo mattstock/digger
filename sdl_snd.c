@@ -5,11 +5,11 @@
 #include "device.h"
 #include "hardware.h"
 
-void fill_audio(void *udata, Uint8 *stream, int len);
+void fill_audio(void *udata, unsigned int8 *stream, int len);
 samp getsample(void);
 
 samp *buf;
-Uint4 bsize;
+unsigned short bsize;
 
 bool wave_device_available = FALSE;
 
@@ -18,7 +18,7 @@ bool initsounddevice(void)
 	return(TRUE);
 }
 
-bool setsounddevice(int base, int irq, int dma, Uint4 samprate, Uint4 bufsize)
+bool setsounddevice(int base, int irq, int dma, unsigned short samprate, unsigned short bufsize)
 {
 	SDL_AudioSpec wanted;
 	bool result = FALSE;
@@ -52,7 +52,7 @@ bool setsounddevice(int base, int irq, int dma, Uint4 samprate, Uint4 bufsize)
 	return(result);
 }
 
-void fill_audio(void *udata, Uint8 *stream, int len)
+void fill_audio(void *udata, unsigned int8 *stream, int len)
 {
 	int i;
 

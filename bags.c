@@ -10,21 +10,21 @@
 #include "scores.h"
 
 struct bag {
-  Sint4 x,y,h,v,xr,yr,dir,wt,gt,fallh;
+  short x,y,h,v,xr,yr,dir,wt,gt,fallh;
   bool wobbling,unfallen,exist;
 } bagdat1[BAGS],bagdat2[BAGS],bagdat[BAGS];
 
-Sint4 pushcount=0,goldtime=0;
+short pushcount=0,goldtime=0;
 
-void updatebag(Sint4 bag);
-void baghitground(Sint4 bag);
-bool pushbag(Sint4 bag,Sint4 dir);
-void removebag(Sint4 bn);
-void getgold(Sint4 bag);
+void updatebag(short bag);
+void baghitground(short bag);
+bool pushbag(short bag,short dir);
+void removebag(short bn);
+void getgold(short bag);
 
 void initbags(void)
 {
-  Sint4 bag,x,y;
+  short bag,x,y;
   pushcount=0;
   goldtime=150-levof10()*10;
   for (bag=0;bag<BAGS;bag++)
@@ -56,7 +56,7 @@ void initbags(void)
 
 void drawbags(void)
 {
-  Sint4 bag;
+  short bag;
   for (bag=0;bag<BAGS;bag++) {
     if (curplayer==0)
       memcpy(&bagdat[bag],&bagdat1[bag],sizeof(struct bag));
@@ -69,7 +69,7 @@ void drawbags(void)
 
 void cleanupbags(void)
 {
-  Sint4 bag;
+  short bag;
   soundfalloff();
   for (bag=0;bag<BAGS;bag++) {
     if (bagdat[bag].exist && ((bagdat[bag].h==7 && bagdat[bag].v==9) ||
@@ -87,7 +87,7 @@ void cleanupbags(void)
 
 void dobags(void)
 {
-  Sint4 bag;
+  short bag;
   bool soundfalloffflag=TRUE,soundwobbleoffflag=TRUE;
   for (bag=0;bag<BAGS;bag++)
     if (bagdat[bag].exist) {
@@ -128,11 +128,11 @@ void dobags(void)
     soundwobbleoff();
 }
 
-Sint4 wblanim[4]={2,0,1,0};
+short wblanim[4]={2,0,1,0};
 
-void updatebag(Sint4 bag)
+void updatebag(short bag)
 {
-  Sint4 x,h,xr,y,v,yr,wbl;
+  short x,h,xr,y,v,yr,wbl;
   x=bagdat[bag].x;
   h=bagdat[bag].h;
   xr=bagdat[bag].xr;
@@ -197,7 +197,7 @@ void updatebag(Sint4 bag)
   }
 }
 
-void baghitground(Sint4 bag)
+void baghitground(short bag)
 {
   int clfirst[TYPES],clcoll[SPRITES],i;
   if (bagdat[bag].dir==DIR_DOWN && bagdat[bag].fallh>1)
@@ -220,9 +220,9 @@ void baghitground(Sint4 bag)
   }
 }
 
-bool pushbag(Sint4 bag,Sint4 dir)
+bool pushbag(short bag,short dir)
 {
-  Sint4 x,y,h,v,ox,oy;
+  short x,y,h,v,ox,oy;
   int clfirst[TYPES],clcoll[SPRITES],i;
   bool push=TRUE,digf;
   ox=x=bagdat[bag].x;
@@ -338,7 +338,7 @@ bool pushbag(Sint4 bag,Sint4 dir)
   return push;
 }
 
-bool pushbags(Sint4 dir,int *clfirst,int *clcoll)
+bool pushbags(short dir,int *clfirst,int *clcoll)
 {
   bool push=TRUE;
   int next=clfirst[1];
@@ -364,7 +364,7 @@ bool pushudbags(int *clfirst,int *clcoll)
   return push;
 }
 
-void removebag(Sint4 bag)
+void removebag(short bag)
 {
   if (bagdat[bag].exist) {
     bagdat[bag].exist=FALSE;
@@ -377,12 +377,12 @@ bool bagexist(int bag)
   return bagdat[bag].exist;
 }
 
-Sint4 bagy(Sint4 bag)
+short bagy(short bag)
 {
   return bagdat[bag].y;
 }
 
-Sint4 getbagdir(Sint4 bag)
+short getbagdir(short bag)
 {
   if (bagdat[bag].exist)
     return bagdat[bag].dir;
@@ -398,9 +398,9 @@ void removebags(int *clfirst,int *clcoll)
   }
 }
 
-Sint4 getnmovingbags(void)
+short getnmovingbags(void)
 {
-  Sint4 bag,n=0;
+  short bag,n=0;
   for (bag=0;bag<BAGS;bag++)
     if (bagdat[bag].exist && bagdat[bag].gt<10 &&
         (bagdat[bag].gt!=0 || bagdat[bag].wobbling))
@@ -408,7 +408,7 @@ Sint4 getnmovingbags(void)
   return n;
 }
 
-void getgold(Sint4 bag)
+void getgold(short bag)
 {
   bool f=TRUE;
   int i;

@@ -31,12 +31,12 @@ bool playing=FALSE,savedrf=FALSE,gotname=FALSE,gotgame=FALSE,drfvalid=TRUE,
 char rname[128];
 
 int reccc=0,recrl=0,rlleft=0;
-Uint5 recp=0;
+unsigned long recp=0;
 char recd,rld;
 
 void mprintf(char *f,...);
-void makedir(Sint4 *dir,bool *fire,char d);
-char maked(Sint4 dir,bool fire);
+void makedir(short *dir,bool *fire,char d);
+char maked(short dir,bool fire);
 
 #ifdef ARM
 #define DEFAULTSN "Digger:Lastgame"
@@ -51,11 +51,11 @@ FILE *info;
 void openplay(char *name)
 {
   FILE *playf=fopen(name,"rt");
-  Sint5 l,i;
+  long l,i;
   char c,buf[80];
   int x,y,n,origgtime=gtime;
   bool origg=gauntlet;
-  Sint4 origstartlev=startlev,orignplayers=nplayers,origdiggers=diggers;
+  short origstartlev=startlev,orignplayers=nplayers,origdiggers=diggers;
 #ifdef INTDRF
   info=fopen("DRFINFO.TXT","wt");
 #endif
@@ -158,14 +158,14 @@ void openplay(char *name)
 void recstart(void)
 {
 #if defined FLATFILE || defined WIN16
-  Uint5 s=MAX_REC_BUFFER;
+  unsigned long s=MAX_REC_BUFFER;
   do {
     recb=(char huge *)farmalloc(s);
     if (recb==NULL)
       s>>=1;
   } while (recb==(char huge *)NULL && s>1024);
 #else
-  Uint5 s=farcoreleft();
+  unsigned long s=farcoreleft();
   if (s>MAX_REC_BUFFER)
     s=MAX_REC_BUFFER;
   recb=(char huge *)farmalloc(s);
@@ -198,7 +198,7 @@ void mprintf(char *f,...)
     recp=0;          /* Give up, file is too long */
 }
 
-void makedir(Sint4 *dir,bool *fire,char d)
+void makedir(short *dir,bool *fire,char d)
 {
   if (d>='A' && d<='Z') {
     *fire=TRUE;
@@ -215,7 +215,7 @@ void makedir(Sint4 *dir,bool *fire,char d)
   }
 }
 
-void playgetdir(Sint4 *dir,bool *fire)
+void playgetdir(short *dir,bool *fire)
 {
   if (rlleft>0) {
     makedir(dir,fire,rld);
@@ -235,7 +235,7 @@ void playgetdir(Sint4 *dir,bool *fire)
   }
 }
 
-char maked(Sint4 dir,bool fire)
+char maked(short dir,bool fire)
 {
   char d;
   if (dir==DIR_NONE)
@@ -270,7 +270,7 @@ void putrun(void)
 #endif
 }
 
-void recputdir(Sint4 dir,bool fire)
+void recputdir(short dir,bool fire)
 {
   char d=maked(dir,fire);
   if (recrl==0)
@@ -326,7 +326,7 @@ void recinit(void)
   reccc=recrl=0;
 }
 
-void recputrand(Uint5 randv)
+void recputrand(unsigned long randv)
 {
 #ifndef BEXKAT
   mprintf("%08lX\n",randv);
@@ -338,7 +338,7 @@ void recsavedrf(void)
 {
 #ifndef BEXKAT
   FILE *recf;
-  Uint5 i;
+  unsigned long i;
   int j;
   bool gotfile=TRUE;
   char nambuf[80],init[4];
@@ -394,21 +394,21 @@ void playskipeol(void)
   plp+=3;
 }
 
-Uint5 playgetrand(void)
+unsigned long playgetrand(void)
 {
   int i;
-  Uint5 r=0;
+  unsigned long r=0;
   char p;
   if ((*plp)=='*')
     plp+=4;
   for (i=0;i<8;i++) {
     p=*(plp++);
     if (p>='0' && p<='9')
-      r|=(Uint5)(p-'0')<<((7-i)<<2);
+      r|=(unsigned long)(p-'0')<<((7-i)<<2);
     if (p>='A' && p<='F')
-      r|=(Uint5)(p-'A'+10)<<((7-i)<<2);
+      r|=(unsigned long)(p-'A'+10)<<((7-i)<<2);
     if (p>='a' && p<='f')
-      r|=(Uint5)(p-'a'+10)<<((7-i)<<2);
+      r|=(unsigned long)(p-'a'+10)<<((7-i)<<2);
   }
   return r;
 }

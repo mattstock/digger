@@ -6,7 +6,7 @@ bool initsounddevice(void)
 	return(0);
 }
 
-bool setsounddevice(int base, int irq, int dma, Uint4 samprate, Uint4 bufsize)
+bool setsounddevice(int base, int irq, int dma, unsigned short samprate, unsigned short bufsize)
 {
 	FIXME("setsounddevice called");
 	return(0);

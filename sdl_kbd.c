@@ -17,8 +17,8 @@
 #include "sdl_vid.h"
 
 #define KBLEN		30
-Sint4 kbuffer[KBLEN];
-Sint4 klen=0;
+short kbuffer[KBLEN];
+short klen=0;
 
 int Handler(const SDL_Event *event)
 {
@@ -40,7 +40,7 @@ int Handler(const SDL_Event *event)
 
 bool GetAsyncKeyState(int key)
 {
-	Uint8 *keys;
+	unsigned int8 *keys;
 	
 	SDL_PumpEvents();
 	keys = SDL_GetKeyState(NULL);
@@ -63,9 +63,9 @@ void restorekeyb(void)
 {
 }
 
-Sint4 getkey(void)
+short getkey(void)
 {
-	Sint4 result;
+	short result;
 	
 	while(kbhit() != TRUE)
 		gethrt();

@@ -20,17 +20,17 @@
 #include "title_gz.h"
 #include "icon.h"
 
-extern Uint3 *vgatable[];
-extern Uint3 *ascii2vga[];
+extern unsigned char *vgatable[];
+extern unsigned char *ascii2vga[];
 
-Uint3 **sprites = vgatable;
-Uint3 **alphas = ascii2vga;
+unsigned char **sprites = vgatable;
+unsigned char **alphas = ascii2vga;
 
-Sint4 xratio = 2;
-Sint4 yratio = 2;
-Sint4 yoffset = 0;
-Sint4 hratio = 2;
-Sint4 wratio = 2;
+short xratio = 2;
+short yratio = 2;
+short yoffset = 0;
+short hratio = 2;
+short wratio = 2;
 #define virt2scrx(x) (x*xratio)
 #define virt2scry(y) (y*yratio+yoffset)
 #define virt2scrw(w) (w*wratio)
@@ -59,9 +59,9 @@ SDL_Color vga16_pal2i[] = \
 
 SDL_Color *npalettes[] = {vga16_pal1, vga16_pal2};
 SDL_Color *ipalettes[] = {vga16_pal1i, vga16_pal2i};
-Sint4	currpal=0;
+short	currpal=0;
 
-Uint32	addflag=0;
+unsigned char2	addflag=0;
 
 SDL_Surface *screen = NULL;
 
@@ -76,9 +76,9 @@ struct PendNode *First=NULL, *Last=NULL;
 
 int pendnum = 0;
 
-SDL_Surface *ch2bmap(Uint3 *sprite, Sint4 w, Sint4 h)
+SDL_Surface *ch2bmap(unsigned char *sprite, short w, short h)
 {
-	Sint4 realw, realh;
+	short realw, realh;
 	SDL_Surface *tmp;
 
 	realw = virt2scrw(w*4);
@@ -104,11 +104,11 @@ bool setmode(void)
 
 void switchmode(void)
 {
-	Uint32 saved;
+	unsigned char2 saved;
 	SDL_Surface *tmp = NULL;
 	SDL_Surface *oldscreen;
 	
-	vgageti(0, 0, (Uint3 *)&tmp, 80, 200);
+	vgageti(0, 0, (unsigned char *)&tmp, 80, 200);
 	oldscreen = screen;
 	saved = addflag;
 
@@ -127,7 +127,7 @@ void switchmode(void)
 
 	SDL_SetColors(screen, tmp->format->palette->colors, 0, \
 		tmp->format->palette->ncolors);
-	vgaputi(0, 0, (Uint3 *)&tmp, 80, 200);
+	vgaputi(0, 0, (unsigned char *)&tmp, 80, 200);
 	SDL_FreeSurface(tmp);
 	SDL_FreeSurface(oldscreen);
 }
@@ -159,9 +159,9 @@ void vgaclear(void)
 {
 	SDL_Surface *tmp = NULL;
 	
-	vgageti(0, 0, (Uint3 *)&tmp, 80, 200);
+	vgageti(0, 0, (unsigned char *)&tmp, 80, 200);
 	memset(tmp->pixels, 0x00, tmp->w*tmp->h);
-	vgaputi(0, 0, (Uint3 *)&tmp, 80, 200);
+	vgaputi(0, 0, (unsigned char *)&tmp, 80, 200);
 	SDL_FreeSurface(tmp);
 }
 void setpal(SDL_Color *pal)
@@ -169,7 +169,7 @@ void setpal(SDL_Color *pal)
 	SDL_SetColors(screen, pal, 0, 16);
 }
 	
-void vgainten(Sint4 inten)
+void vgainten(short inten)
 {
 	if(inten == 1)
 		setpal(ipalettes[currpal]);
@@ -177,7 +177,7 @@ void vgainten(Sint4 inten)
 		setpal(npalettes[currpal]);
 }
 
-void vgapal(Sint4 pal)
+void vgapal(short pal)
 {
 	setpal(npalettes[pal]);
 	currpal = pal;
@@ -197,7 +197,7 @@ void doscreenupdate(void)
 	pendnum = 0;
 }
 
-void vgaputi(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
+void vgaputi(short x, short y, unsigned char *p, short w, short h)
 {
 	SDL_Surface *tmp;
 	SDL_Palette *reserv;
@@ -251,7 +251,7 @@ void vgaputi(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
 	pendnum++;
 }
 
-void vgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
+void vgageti(short x, short y, unsigned char *p, short w, short h)
 {
 	SDL_Surface *tmp;
 	SDL_Rect src;
@@ -271,19 +271,19 @@ void vgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
 	memcpy(p, &tmp, (sizeof (SDL_Surface *)));
 }
 
-Sint4 vgagetpix(Sint4 x, Sint4 y)
+short vgagetpix(short x, short y)
 {	
 	SDL_Surface *tmp = NULL;
-	Uint4 xi,yi;
-	Uint4 i = 0;
-	Sint4 rval = 0;
-	Uint8 *pixels;
+	unsigned short xi,yi;
+	unsigned short i = 0;
+	short rval = 0;
+	unsigned int8 *pixels;
 
 	if ((x > 319) || (y > 199))
 	       return (0xff);
 
-	vgageti(x, y, (Uint3 *)&tmp, 1, 1);
-	pixels = (Uint8 *)tmp->pixels;
+	vgageti(x, y, (unsigned char *)&tmp, 1, 1);
+	pixels = (unsigned int8 *)tmp->pixels;
 	for (yi=0;yi<tmp->h;yi++)
 		for (xi=0;xi<tmp->w;xi++)
 			if (pixels[i++])
@@ -294,28 +294,28 @@ Sint4 vgagetpix(Sint4 x, Sint4 y)
 	return(rval & 0xee);
 }
 
-void vgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
+void vgaputim(short x, short y, short ch, short w, short h)
 {
 	SDL_Surface *tmp;
 	SDL_Surface *mask;
 	SDL_Surface *scr = NULL;
-	Uint8   *tmp_pxl, *mask_pxl, *scr_pxl;
-	Sint4 realsize;
-	Sint4 i;
+	unsigned int8   *tmp_pxl, *mask_pxl, *scr_pxl;
+	short realsize;
+	short i;
 
 	tmp = ch2bmap(sprites[ch*2], w, h);
 	mask = ch2bmap(sprites[ch*2+1], w, h);
-	vgageti(x, y, (Uint3 *)&scr, w, h);
+	vgageti(x, y, (unsigned char *)&scr, w, h);
 	realsize = scr->w * scr->h;
-	tmp_pxl = (Uint8 *)tmp->pixels;
-	mask_pxl = (Uint8 *)mask->pixels;
-	scr_pxl = (Uint8 *)scr->pixels;
+	tmp_pxl = (unsigned int8 *)tmp->pixels;
+	mask_pxl = (unsigned int8 *)mask->pixels;
+	scr_pxl = (unsigned int8 *)scr->pixels;
 	for(i=0;i<realsize;i++)
 		if(tmp_pxl[i] != 0xff)
 			scr_pxl[i] = (scr_pxl[i] & mask_pxl[i]) | \
 				tmp_pxl[i];
 
-	vgaputi(x, y, (Uint3 *)&scr, w, h);
+	vgaputi(x, y, (unsigned char *)&scr, w, h);
 	tmp->pixels = NULL;   /* We should NULL'ify these ppointers, or the VGLBitmapDestroy */
 	mask->pixels = NULL;  /* will shoot itself in the foot by trying to dellocate statically */
 	SDL_FreeSurface(tmp);/* allocated arrays */
@@ -323,13 +323,13 @@ void vgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
 	SDL_FreeSurface(scr);
 }
 
-void vgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
+void vgawrite(short x, short y, short ch, short c)
 {
 	SDL_Surface *tmp;
-	Uint8 *copy;
-	Uint8 color;
-	Sint4 w=3, h=12, size;
-	Sint4 i;
+	unsigned int8 *copy;
+	unsigned int8 color;
+	short w=3, h=12, size;
+	short i;
 
 	if(((ch - 32) >= 0x5f) || (ch < 32))
 		return;
@@ -362,7 +362,7 @@ void vgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
 		copy[i] = color;
 	}
 	tmp->pixels = copy;
-	vgaputi(x, y, (Uint3 *)&tmp, w, h);
+	vgaputi(x, y, (unsigned char *)&tmp, w, h);
 	SDL_FreeSurface(tmp);
 }
 
@@ -370,9 +370,9 @@ void vgatitle(void)
 {
 	SDL_Surface *tmp=NULL;
 
-	vgageti(0, 0, (Uint3 *)&tmp, 80, 200);
+	vgageti(0, 0, (unsigned char *)&tmp, 80, 200);
 	gettitle(tmp->pixels);
-	vgaputi(0, 0, (Uint3 *)&tmp, 80, 200);
+	vgaputi(0, 0, (unsigned char *)&tmp, 80, 200);
 	SDL_FreeSurface(tmp);
 }
 
@@ -400,10 +400,10 @@ void savescreen(void)
 void cgainit(void) {}
 void cgaclear(void) {}
 void cgatitle(void) {}
-void cgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c) {}
-void cgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h) {}
-void cgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h) {}
-void cgaputi(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h) {}
-void cgapal(Sint4 pal) {}
-void cgainten(Sint4 inten) {}
-Sint4 cgagetpix(Sint4 x, Sint4 y) {return(0);}
+void cgawrite(short x, short y, short ch, short c) {}
+void cgaputim(short x, short y, short ch, short w, short h) {}
+void cgageti(short x, short y, unsigned char *p, short w, short h) {}
+void cgaputi(short x, short y, unsigned char *p, short w, short h) {}
+void cgapal(short pal) {}
+void cgainten(short inten) {}
+short cgagetpix(short x, short y) {return(0);}

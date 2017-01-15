@@ -24,20 +24,20 @@
 
 struct game
 {
-  Sint4 level;
+  short level;
   bool levdone;
 } gamedat[2];
 
 char pldispbuf[14];
 
-Sint4 curplayer=0,nplayers=1,penalty=0,diggers=1,startlev=1;
+short curplayer=0,nplayers=1,penalty=0,diggers=1,startlev=1;
 
 bool levnotdrawn=FALSE,alldead=FALSE,unlimlives=FALSE,started;
 
 char levfname[132];
 bool levfflag=FALSE;
 bool biosflag=FALSE;
-Sint5 delaytime=0;
+long delaytime=0;
 int gtime=0;
 bool gauntlet=FALSE,timeout=FALSE,synchvid=FALSE;
 
@@ -46,7 +46,7 @@ void switchnplayers(void);
 void drawscreen(void);
 void initchars(void);
 void checklevdone(void);
-Sint4 levno(void);
+short levno(void);
 void testpause(void);
 void calibrate(void);
 void parsecmd(int argc,char *argv[]);
@@ -139,7 +139,7 @@ char leveldat[8][MHEIGHT][MWIDTH]=
   "VCCCCCV VCCCCCV",
   "HHHHHHHHHHHHHHH"}};
 
-char getlevch(Sint4 x,Sint4 y,Sint4 l)
+char getlevch(short x,short y,short l)
 {
   //  printf("getlevch()\n");
   if ((l==3 || l==4) && !levfflag && diggers==2 && y==9 && (x==6 || x==8))
@@ -154,7 +154,7 @@ extern FILE *info;
 
 void game(void)
 {
-  Sint4 t,c,i;
+  short t,c,i;
   bool flashplayer=FALSE;
 #ifdef _WINDOWS
   show_game_menu();
@@ -332,7 +332,7 @@ int main(int argc,char *argv[])
 
 int mainprog(void)
 {
-  Sint4 frame,t,x=0;
+  short frame,t,x=0;
   loadscores();
 #ifdef _WINDOWS
   show_main_menu();
@@ -546,23 +546,23 @@ void cleartopline(void)
   outtext(" ",308,0,3);
 }
 
-Sint4 levplan(void)
+short levplan(void)
 {
-  Sint4 l=levno();
+  short l=levno();
   if (l>8)
     l=(l&3)+5; /* Level plan: 12345678, 678, (5678) 247 times, 5 forever */
   printf("levplan() = %d\n", l);
   return l;
 }
 
-Sint4 levof10(void)
+short levof10(void)
 {
   if (gamedat[curplayer].level>10)
     return 10;
   return gamedat[curplayer].level;
 }
 
-Sint4 levno(void)
+short levno(void)
 {
   return gamedat[curplayer].level;
 }
@@ -597,17 +597,17 @@ void testpause(void)
 
 void calibrate(void)
 {
-  volume=(Sint4)(getkips()/291);
+  volume=(short)(getkips()/291);
   if (volume==0)
     volume=1;
 }
 
-Uint4 sound_device,sound_port,sound_irq,sound_dma,sound_rate,sound_length;
+unsigned short sound_device,sound_port,sound_irq,sound_dma,sound_rate,sound_length;
 
 void parsecmd(int argc,char *argv[])
 {
   char *word;
-  Sint4 arg,i=0,j,speedmul;
+  short arg,i=0,j,speedmul;
   bool sf,gs=FALSE,norepf=FALSE;
   FILE *levf;
 
@@ -807,12 +807,12 @@ void parsecmd(int argc,char *argv[])
   }
 }
 
-Sint5 randv;
+long randv;
 
-Sint4 randno(Sint4 n)
+short randno(short n)
 {
   randv=randv*0x15a4e35l+1;
-  return (Sint4)((randv&0x7fffffffl)%n);
+  return (short)((randv&0x7fffffffl)%n);
 }
 
 char *keynames[17]={"Right","Up","Left","Down","Fire",

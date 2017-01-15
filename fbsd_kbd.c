@@ -7,8 +7,8 @@
 #include "hardware.h"
 
 #define KBLEN		30
-Sint4 kbuffer[KBLEN];
-Sint4 klen=0;
+short kbuffer[KBLEN];
+short klen=0;
 bool states[256];
 
 const int quertycodes[48+1]={41, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,\
@@ -33,7 +33,7 @@ void restorekeyb(void)
 
 void ProcessKbd(void)
 {
-	Sint4 result, i;
+	short result, i;
 	bool isasymbol;
 	bool state;
 
@@ -74,9 +74,9 @@ bool GetAsyncKeyState(int key)
 	return(states[key]);
 }
 
-Sint4 getkey(void)
+short getkey(void)
 {
-	Sint4 result;
+	short result;
 	
 	while(kbhit() != TRUE)
 		gethrt();

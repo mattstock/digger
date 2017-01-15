@@ -17,13 +17,13 @@ bool escape=FALSE,firepflag=FALSE,aleftpressed=FALSE,arightpressed=FALSE,
 bool fire2pflag=FALSE,aleft2pressed=FALSE,aright2pressed=FALSE,
      aup2pressed=FALSE,adown2pressed=FALSE,af12pressed=FALSE;
 
-Sint4 akeypressed;
+short akeypressed;
 
-Sint4 dynamicdir=-1,dynamicdir2=-1,staticdir=-1,staticdir2=-1,joyx=0,joyy=0;
+short dynamicdir=-1,dynamicdir2=-1,staticdir=-1,staticdir2=-1,joyx=0,joyy=0;
 
 bool joybut1=FALSE,joybut2=FALSE;
 
-Sint4 keydir=0,keydir2=0,jleftthresh=0,jupthresh=0,jrightthresh=0,
+short keydir=0,keydir2=0,jleftthresh=0,jupthresh=0,jrightthresh=0,
       jdownthresh=0,joyanax=0,joyanay=0;
 
 bool joyflag=FALSE,pausef=FALSE;
@@ -286,7 +286,7 @@ int keycodes[17][5]={{0x4d,0xcd,0x14d,-2,-2}, /* 1 Right */
 #endif
 
 
-Uint4 scancode;
+unsigned short scancode;
 
 int pki;
 
@@ -301,7 +301,7 @@ bool *flagp[10]={
    breaks set and release flags, these "variables" are actually macros linking
    to these flags (they are each only read once).
 */
-void processkey(Uint4 key)
+void processkey(unsigned short key)
 {
   for (pki=0;pki<10;pki++) {
     if (key==keycodes[pki][0]) /* Make */
@@ -469,7 +469,7 @@ bool ou2pressed=FALSE,od2pressed=FALSE,ol2pressed=FALSE,or2pressed=FALSE;
 
 void readdir(int n)
 {
-  Sint4 j;
+  short j;
   bool u=FALSE,d=FALSE,l=FALSE,r=FALSE;
   bool u2=FALSE,d2=FALSE,l2=FALSE,r2=FALSE;
 
@@ -573,7 +573,7 @@ void readdir(int n)
    effectively if the user waggles the joystick in the title screen. */
 bool teststart(void)
 {
-  Sint4 j;
+  short j;
   bool startf=FALSE;
   if (joyflag) {
     readjoy();
@@ -621,9 +621,9 @@ bool teststart(void)
 
 /* Why the joystick reading is split between readdir and getdir like this is a
    mystery to me. */
-Sint4 getdir(int n)
+short getdir(int n)
 {
-  Sint4 dir=((n==0) ? keydir : keydir2);
+  short dir=((n==0) ? keydir : keydir2);
   if (joyflag) {
     dir=DIR_NONE;
     if (joyx<jleftthresh)

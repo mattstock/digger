@@ -16,16 +16,16 @@
 
 struct digger
 {
-  Sint4 x,y,h,v,rx,ry,mdir,dir,bagtime,rechargetime,fx,fy,fdir,expsn,
+  short x,y,h,v,rx,ry,mdir,dir,bagtime,rechargetime,fx,fy,fdir,expsn,
         deathstage,deathbag,deathani,deathtime,emocttime,emn,msc,lives,ivt;
   bool notfiring,alive,firepressed,dead,levdone,invin;
 } digdat[DIGGERS];
 
-Sint4 startbonustimeleft=0,bonustimeleft;
+short startbonustimeleft=0,bonustimeleft;
 
-Sint4 emmask=0;
+short emmask=0;
 
-Sint3 emfield[MSIZE];
+char emfield[MSIZE];
 
 bool bonusvisible=FALSE,bonusmode=FALSE,digvisible;
 
@@ -69,10 +69,10 @@ void initdigger(void)
   bonusvisible=bonusmode=FALSE;
 }
 
-Uint5 curtime,ftime;
+unsigned long curtime,ftime;
 
 #ifdef INTDRF
-Uint5 frame;
+unsigned long frame;
 #endif
 
 void newframe(void)
@@ -80,7 +80,7 @@ void newframe(void)
 
 #ifndef ARM
 
-  Uint5 t;
+  unsigned long t;
   if (synchvid) {
     for (;curtime<ftime;curtime+=17094) { /* 17094 = ticks in a refresh */
 #ifdef _WINDOWS
@@ -123,7 +123,7 @@ void newframe(void)
 
 }
 
-Uint5 cgtime;
+unsigned long cgtime;
 
 void drawdig(int n,int d,int x,int y,bool f)
 {
@@ -204,7 +204,7 @@ void dodigger(void)
 
 void updatefire(int n)
 {
-  Sint4 pix = 0;
+  short pix = 0;
   int clfirst[TYPES],clcoll[SPRITES],i;
   bool clflag;
   if (digdat[n].notfiring) {
@@ -380,7 +380,7 @@ void killfire(int n)
 
 void updatedigger(int n)
 {
-  Sint4 dir,ddir,diggerox,diggeroy,nmon;
+  short dir,ddir,diggerox,diggeroy,nmon;
   bool push=TRUE,bagf;
   int clfirst[TYPES],clcoll[SPRITES],i;
   readdir(n-curplayer);
@@ -496,7 +496,7 @@ void sceatm(int n)
   digdat[n].msc<<=1;
 }
 
-Sint4 deatharc[7]={3,5,6,6,5,3,0};
+short deatharc[7]={3,5,6,6,5,3,0};
 
 void diggerdie(int n)
 {
@@ -652,7 +652,7 @@ void erasebonus(void)
   ginten(0);
 }
 
-Sint4 reversedir(Sint4 dir)
+short reversedir(short dir)
 {
   switch (dir) {
     case DIR_RIGHT: return DIR_LEFT;
@@ -663,7 +663,7 @@ Sint4 reversedir(Sint4 dir)
   return dir;
 }
 
-bool checkdiggerunderbag(Sint4 h,Sint4 v)
+bool checkdiggerunderbag(short h,short v)
 {
   int n;
   for (n=curplayer;n<diggers+curplayer;n++)
@@ -675,7 +675,7 @@ bool checkdiggerunderbag(Sint4 h,Sint4 v)
   return FALSE;
 }
 
-void killdigger(int n,Sint4 stage,Sint4 bag)
+void killdigger(int n,short stage,short bag)
 {
   if (digdat[n].invin)
     return;
@@ -688,7 +688,7 @@ void killdigger(int n,Sint4 stage,Sint4 bag)
 
 void makeemfield(void)
 {
-  Sint4 x,y;
+  short x,y;
   emmask=1<<curplayer;
   for (x=0;x<MWIDTH;x++)
     for (y=0;y<MHEIGHT;y++)
@@ -700,7 +700,7 @@ void makeemfield(void)
 
 void drawemeralds(void)
 {
-  Sint4 x,y;
+  short x,y;
   emmask=1<<curplayer;
   for (x=0;x<MWIDTH;x++)
     for (y=0;y<MHEIGHT;y++)
@@ -708,12 +708,12 @@ void drawemeralds(void)
         drawemerald(x*20+12,y*18+21);
 }
 
-Sint4 embox[8]={8,12,12,9,16,12,6,9};
+short embox[8]={8,12,12,9,16,12,6,9};
 
-bool hitemerald(Sint4 x,Sint4 y,Sint4 rx,Sint4 ry,Sint4 dir)
+bool hitemerald(short x,short y,short rx,short ry,short dir)
 {
   bool hit=FALSE;
-  Sint4 r;
+  short r;
   if (dir!=DIR_RIGHT && dir!=DIR_UP && dir!=DIR_LEFT && dir!=DIR_DOWN)
     return hit;
   if (dir==DIR_RIGHT && rx!=0)
@@ -739,9 +739,9 @@ bool hitemerald(Sint4 x,Sint4 y,Sint4 rx,Sint4 ry,Sint4 dir)
   return hit;
 }
 
-Sint4 countem(void)
+short countem(void)
 {
-  Sint4 x,y,n=0;
+  short x,y,n=0;
   for (x=0;x<MWIDTH;x++)
     for (y=0;y<MHEIGHT;y++)
       if (emfield[y*MWIDTH+x]&emmask)
@@ -749,7 +749,7 @@ Sint4 countem(void)
   return n;
 }
 
-void killemerald(Sint4 x,Sint4 y)
+void killemerald(short x,short y)
 {
   if (emfield[(y+1)*MWIDTH+x]&emmask) {
     emfield[(y+1)*MWIDTH+x]&=~emmask;

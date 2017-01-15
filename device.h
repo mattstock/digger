@@ -5,8 +5,8 @@ typedef unsigned char samp;      /* 8 bit unsigned samples */
 #define MAX_SAMP 0xff
 
 extern samp *buffer;
-extern Uint4 firsts,last,size;
+extern unsigned short firsts,last,size;
 
-bool setsounddevice(int base,int irq,int dma,Uint4 samprate,Uint4 bufsize);
+bool setsounddevice(int base,int irq,int dma,unsigned short samprate,unsigned short bufsize);
 bool initsounddevice(void);
 void killsounddevice(void);

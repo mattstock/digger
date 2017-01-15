@@ -12,25 +12,25 @@
 
 struct monster
 {
-  Sint4 x,y,h,v,xr,yr,dir,hdir,t,hnt,death,bag,dtime,stime,chase;
+  short x,y,h,v,xr,yr,dir,hdir,t,hnt,death,bag,dtime,stime,chase;
   bool flag,nob,alive;
 } mondat[6];
 
-Sint4 nextmonster=0,totalmonsters=0,maxmononscr=0,nextmontime=0,mongaptime=0;
-Sint4 chase=0;
+short nextmonster=0,totalmonsters=0,maxmononscr=0,nextmontime=0,mongaptime=0;
+short chase=0;
 
 bool unbonusflag=FALSE;
 
 void createmonster(void);
-void monai(Sint4 mon);
-void mondie(Sint4 mon);
-bool fieldclear(Sint4 dir,Sint4 x,Sint4 y);
-void squashmonster(Sint4 mon,Sint4 death,Sint4 bag);
-Sint4 nmononscr(void);
+void monai(short mon);
+void mondie(short mon);
+bool fieldclear(short dir,short x,short y);
+void squashmonster(short mon,short death,short bag);
+short nmononscr(void);
 
 void initmonsters(void)
 {
-  Sint4 i;
+  short i;
   for (i=0;i<MONSTERS;i++)
     mondat[i].flag=FALSE;
   nextmonster=0;
@@ -59,7 +59,7 @@ void initmonsters(void)
 
 void erasemonsters(void)
 {
-  Sint4 i;
+  short i;
   for (i=0;i<MONSTERS;i++)
     if (mondat[i].flag)
       erasespr(i+FIRSTMONSTER);
@@ -67,7 +67,7 @@ void erasemonsters(void)
 
 void domonsters(void)
 {
-  Sint4 i;
+  short i;
   if (nextmontime>0)
     nextmontime--;
   else {
@@ -104,7 +104,7 @@ void domonsters(void)
 
 void createmonster(void)
 {
-  Sint4 i;
+  short i;
   for (i=0;i<MONSTERS;i++)
     if (!mondat[i].flag) {
       mondat[i].flag=TRUE;
@@ -137,9 +137,9 @@ void mongold(void)
   mongotgold=TRUE;
 }
 
-void monai(Sint4 mon)
+void monai(short mon)
 {
-  Sint4 monox,monoy,dir,mdirp1,mdirp2,mdirp3,mdirp4,t;
+  short monox,monoy,dir,mdirp1,mdirp2,mdirp3,mdirp4,t;
   int clcoll[SPRITES],clfirst[TYPES],i,m,dig;
   bool push,bagf;
   monox=mondat[mon].x;
@@ -422,7 +422,7 @@ void monai(Sint4 mon)
   mondat[mon].yr=(mondat[mon].y-18)%18;
 }
 
-void mondie(Sint4 mon)
+void mondie(short mon)
 {
   switch (mondat[mon].death) {
     case 1:
@@ -449,7 +449,7 @@ void mondie(Sint4 mon)
   }
 }
 
-bool fieldclear(Sint4 dir,Sint4 x,Sint4 y)
+bool fieldclear(short dir,short x,short y)
 {
   switch (dir) {
     case DIR_RIGHT:
@@ -479,15 +479,15 @@ bool fieldclear(Sint4 dir,Sint4 x,Sint4 y)
   return FALSE;
 }
 
-void checkmonscared(Sint4 h)
+void checkmonscared(short h)
 {
-  Sint4 m;
+  short m;
   for (m=0;m<MONSTERS;m++)
     if (h==mondat[m].h && mondat[m].dir==DIR_UP)
       mondat[m].dir=DIR_DOWN;
 }
 
-void killmon(Sint4 mon)
+void killmon(short mon)
 {
   if (mondat[mon].flag) {
     mondat[mon].flag=mondat[mon].alive=FALSE;
@@ -497,7 +497,7 @@ void killmon(Sint4 mon)
   }
 }
 
-void squashmonsters(Sint4 bag,int *clfirst,int *clcoll)
+void squashmonsters(short bag,int *clfirst,int *clcoll)
 {
   int next=clfirst[2],m;
   while (next!=-1) {
@@ -508,7 +508,7 @@ void squashmonsters(Sint4 bag,int *clfirst,int *clcoll)
   }
 }
 
-Sint4 killmonsters(int *clfirst,int *clcoll)
+short killmonsters(int *clfirst,int *clcoll)
 {
   int next=clfirst[2],m,n=0;
   while (next!=-1) {
@@ -520,37 +520,37 @@ Sint4 killmonsters(int *clfirst,int *clcoll)
   return n;
 }
 
-void squashmonster(Sint4 mon,Sint4 death,Sint4 bag)
+void squashmonster(short mon,short death,short bag)
 {
   mondat[mon].alive=FALSE;
   mondat[mon].death=death;
   mondat[mon].bag=bag;
 }
 
-Sint4 monleft(void)
+short monleft(void)
 {
   return nmononscr()+totalmonsters-nextmonster;
 }
 
-Sint4 nmononscr(void)
+short nmononscr(void)
 {
-  Sint4 i,n=0;
+  short i,n=0;
   for (i=0;i<MONSTERS;i++)
     if (mondat[i].flag)
       n++;
   return n;
 }
 
-void incmont(Sint4 n)
+void incmont(short n)
 {
-  Sint4 m;
+  short m;
   if (n>MONSTERS)
     n=MONSTERS;
   for (m=1;m<n;m++)
     mondat[m].t++;
 }
 
-Sint4 getfield(Sint4 x,Sint4 y)
+short getfield(short x,short y)
 {
   return field[y*15+x];
 }

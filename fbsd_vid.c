@@ -21,23 +21,23 @@
 #include "hardware.h"
 #include "title_gz.h"
 
-extern Uint3   *vgatable[];
-extern Uint3   *ascii2vga[];
+extern unsigned char   *vgatable[];
+extern unsigned char   *ascii2vga[];
 
-Uint3         **sprites = vgatable;
-Uint3         **alphas = ascii2vga;
+unsigned char         **sprites = vgatable;
+unsigned char         **alphas = ascii2vga;
 
-Sint4           xratio = 2;
-Sint4           yratio = 2;
-Sint4           yoffset = 0;
-Sint4           hratio = 2;
-Sint4           wratio = 2;
+short           xratio = 2;
+short           yratio = 2;
+short           yoffset = 0;
+short           hratio = 2;
+short           wratio = 2;
 #define virt2scrx(x) (x*xratio)
 #define virt2scry(y) (y*yratio+yoffset)
 #define virt2scrw(w) (w*wratio)
 #define virt2scrh(h) (h*hratio)
 
-typedef Uint3   palette[3];
+typedef unsigned char   palette[3];
 
 /* palette1, normal intensity */
 palette         vga16_pal1[] = \
@@ -62,7 +62,7 @@ palette         vga16_pal2i[] = \
 
 palette        *npalettes[] = {vga16_pal1, vga16_pal2};
 palette        *ipalettes[] = {vga16_pal1i, vga16_pal2i};
-Sint4           currpal = 0;
+short           currpal = 0;
 
 #if __FreeBSD_version < 400000
 VGLBitmap      *
@@ -103,9 +103,9 @@ VGLBitmapAllocateBits(VGLBitmap * object)
 #endif
 
 VGLBitmap      *
-ch2bmap(Uint3 * sprite, Sint4 w, Sint4 h)
+ch2bmap(unsigned char * sprite, short w, short h)
 {
-    Sint4           realw, realh;
+    short           realw, realh;
     VGLBitmap      *tmp;
 
     realw = virt2scrw(w * 4);
@@ -167,7 +167,7 @@ vgaclear(void)
 void
 setpal(palette * pal)
 {
-    Sint4           i;
+    short           i;
 
     for (i = 0; i < 16; i++) {
 	VGLSetPaletteIndex(i, (pal[i])[2], \
@@ -176,7 +176,7 @@ setpal(palette * pal)
 }
 
 void
-vgainten(Sint4 inten)
+vgainten(short inten)
 {
     if (inten == 1)
 	setpal(ipalettes[currpal]);
@@ -185,17 +185,17 @@ vgainten(Sint4 inten)
 }
 
 void
-vgapal(Sint4 pal)
+vgapal(short pal)
 {
     setpal(npalettes[pal]);
     currpal = pal;
 }
 
 void
-vgaputi(Sint4 x, Sint4 y, Uint3 * p, Sint4 w, Sint4 h)
+vgaputi(short x, short y, unsigned char * p, short w, short h)
 {
     VGLBitmap      *tmp;
-    Sint4           realx, realy, realh, realw;
+    short           realx, realy, realh, realw;
 
     realx = virt2scrx(x);
     realy = virt2scry(y);
@@ -207,10 +207,10 @@ vgaputi(Sint4 x, Sint4 y, Uint3 * p, Sint4 w, Sint4 h)
 }
 
 void
-vgageti(Sint4 x, Sint4 y, Uint3 * p, Sint4 w, Sint4 h)
+vgageti(short x, short y, unsigned char * p, short w, short h)
 {
     VGLBitmap      *tmp;
-    Sint4           realx, realy, realh, realw;
+    short           realx, realy, realh, realw;
 
     memcpy(&tmp, p, (sizeof(VGLBitmap *)));
     if (tmp != NULL)
@@ -229,16 +229,16 @@ vgageti(Sint4 x, Sint4 y, Uint3 * p, Sint4 w, Sint4 h)
     memcpy(p, &tmp, (sizeof(VGLBitmap *)));
 }
 
-Sint4
-vgagetpix(Sint4 x, Sint4 y)
+short
+vgagetpix(short x, short y)
 {
     VGLBitmap      *tmp = NULL;
-    Uint4           xi, yi;
-    Uint4           i = 0;
-    Sint4           rval = 0;
+    unsigned short           xi, yi;
+    unsigned short           i = 0;
+    short           rval = 0;
     if ((x > 319) || (y > 199))
 	return (0xff);
-    vgageti(x, y, (Uint3 *) & tmp, 1, 1);
+    vgageti(x, y, (unsigned char *) & tmp, 1, 1);
     for (yi = 0; yi < tmp->Ysize; yi++)
 	for (xi = 0; xi < tmp->Xsize; xi++)
 	    if (tmp->Bitmap[i++])
@@ -250,24 +250,24 @@ vgagetpix(Sint4 x, Sint4 y)
 }
 
 void
-vgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
+vgaputim(short x, short y, short ch, short w, short h)
 {
     VGLBitmap      *tmp;
     VGLBitmap      *mask;
     VGLBitmap      *scr = NULL;
-    Sint4           realsize;
-    Sint4           i;
+    short           realsize;
+    short           i;
 
     tmp = ch2bmap(sprites[ch * 2], w, h);
     mask = ch2bmap(sprites[ch * 2 + 1], w, h);
-    vgageti(x, y, (Uint3 *) & scr, w, h);
+    vgageti(x, y, (unsigned char *) & scr, w, h);
     realsize = scr->Xsize * scr->Ysize;
     for (i = 0; i < realsize; i++)
 	if (tmp->Bitmap[i] != 0xff)
 	    scr->Bitmap[i] = (scr->Bitmap[i] & mask->Bitmap[i]) | \
 		tmp->Bitmap[i];
 
-    vgaputi(x, y, (Uint3 *) & scr, w, h);
+    vgaputi(x, y, (unsigned char *) & scr, w, h);
     tmp->Bitmap = NULL;		/* We should NULL'ify these ppointers, or the
 				 * VGLBitmapDestroy */
     mask->Bitmap = NULL;	/* will shoot itself in the foot by trying to
@@ -278,13 +278,13 @@ vgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
 }
 
 void
-vgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
+vgawrite(short x, short y, short ch, short c)
 {
     VGLBitmap      *tmp;
-    Uint3          *copy;
-    Uint3           color;
-    Sint4           w = 3, h = 12, size;
-    Sint4           i;
+    unsigned char          *copy;
+    unsigned char           color;
+    short           w = 3, h = 12, size;
+    short           i;
 
     if(((ch - 32) >= 0x5f) || (ch < 32))
 	return;
@@ -314,7 +314,7 @@ vgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
 	copy[i] = color;
     }
     tmp->Bitmap = copy;
-    vgaputi(x, y, (Uint3 *) & tmp, w, h);
+    vgaputi(x, y, (unsigned char *) & tmp, w, h);
     VGLBitmapDestroy(tmp);
 }
 
@@ -323,9 +323,9 @@ vgatitle(void)
 {
     VGLBitmap      *tmp = NULL;
 
-    vgageti(0, 0, (Uint3 *) & tmp, 80, 200);
+    vgageti(0, 0, (unsigned char *) & tmp, 80, 200);
     gettitle(tmp->Bitmap);
-    vgaputi(0, 0, (Uint3 *) & tmp, 80, 200);
+    vgaputi(0, 0, (unsigned char *) & tmp, 80, 200);
     VGLBitmapDestroy(tmp);
 }
 
@@ -366,31 +366,31 @@ cgatitle(void)
 {
 }
 void
-cgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
+cgawrite(short x, short y, short ch, short c)
 {
 }
 void
-cgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
+cgaputim(short x, short y, short ch, short w, short h)
 {
 }
 void
-cgageti(Sint4 x, Sint4 y, Uint3 * p, Sint4 w, Sint4 h)
+cgageti(short x, short y, unsigned char * p, short w, short h)
 {
 }
 void
-cgaputi(Sint4 x, Sint4 y, Uint3 * p, Sint4 w, Sint4 h)
+cgaputi(short x, short y, unsigned char * p, short w, short h)
 {
 }
 void
-cgapal(Sint4 pal)
+cgapal(short pal)
 {
 }
 void
-cgainten(Sint4 inten)
+cgainten(short inten)
 {
 }
-Sint4
-cgagetpix(Sint4 x, Sint4 y)
+short
+cgagetpix(short x, short y)
 {
     return (0);
 }

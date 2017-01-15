@@ -139,7 +139,7 @@ void GetINIString(char *section,char *key,char *def,char *dest,
 #endif
 }
 
-Sint5 GetINIInt(char *section,char *key,Sint5 def,char *filename)
+long GetINIInt(char *section,char *key,long def,char *filename)
 {
   char buf[80];
   sprintf(buf,"%li",def);
@@ -147,7 +147,7 @@ Sint5 GetINIInt(char *section,char *key,Sint5 def,char *filename)
   return atol(buf);
 }
 
-void WriteINIInt(char *section,char *key,Sint5 value,
+void WriteINIInt(char *section,char *key,long value,
                             char *filename)
 {
   char buf[80];

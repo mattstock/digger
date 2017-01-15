@@ -19,13 +19,13 @@
 #include "fbsd_snd.h"
 #endif
 
-Sint4 wavetype=0,musvol=0;
-Sint4 spkrmode=0,timerrate=0x7d0;
-Uint4 timercount=0,t2val=0,t0val=0;
-Sint4 pulsewidth=1;
-Sint4 volume=0;
+short wavetype=0,musvol=0;
+short spkrmode=0,timerrate=0x7d0;
+unsigned short timercount=0,t2val=0,t0val=0;
+short pulsewidth=1;
+short volume=0;
 
-Sint3 timerclock=0;
+char timerclock=0;
 
 bool soundflag=TRUE,musicflag=TRUE;
 
@@ -66,23 +66,23 @@ void (*initint8)(void)=s0initint8;
 void (*restoreint8)(void)=s0restoreint8;
 void (*soundoff)(void)=s0soundoff;
 void (*setspkrt2)(void)=s0setspkrt2;
-void (*settimer0)(Uint4 t0v)=s0settimer0;
-void (*timer0)(Uint4 t0v)=s0timer0;
-void (*settimer2)(Uint4 t2v)=s0settimer2;
-void (*timer2)(Uint4 t2v)=s0timer2;
+void (*settimer0)(unsigned short t0v)=s0settimer0;
+void (*timer0)(unsigned short t0v)=s0timer0;
+void (*settimer2)(unsigned short t2v)=s0settimer2;
+void (*timer2)(unsigned short t2v)=s0timer2;
 void (*soundkillglob)(void)=s0soundkillglob;
 
 bool sndflag=FALSE,soundpausedflag=FALSE;
 
-Sint5 randvs;
+long randvs;
 
-Sint4 randnos(Sint4 n)
+short randnos(short n)
 {
   randvs=randvs*0x15a4e35l+1;
-  return (Sint4)((randvs&0x7fffffffl)%n);
+  return (short)((randvs&0x7fffffffl)%n);
 }
 
-void sett2val(Sint4 t2v)
+void sett2val(short t2v)
 {
   if (sndflag)
     timer2(t2v);
@@ -152,11 +152,11 @@ void soundstop(void)
 
 
 bool soundlevdoneflag=FALSE;
-Sint4 nljpointer=0,nljnoteduration=0;
+short nljpointer=0,nljnoteduration=0;
 
 void soundlevdone(void)
 {
-  Sint4 timer=0;
+  short timer=0;
   soundstop();
   nljpointer=0;
   nljnoteduration=20;
@@ -196,7 +196,7 @@ void soundlevdoneoff(void)
   soundlevdoneflag=soundpausedflag=FALSE;
 }
 
-Sint4 newlevjingle[11]={0x8e8,0x712,0x5f2,0x7f0,0x6ac,0x54c,
+short newlevjingle[11]={0x8e8,0x712,0x5f2,0x7f0,0x6ac,0x54c,
                         0x712,0x5f2,0x4b8,0x474,0x474};
 
 void soundlevdoneupdate(void)
@@ -224,7 +224,7 @@ void soundlevdoneupdate(void)
 
 
 bool soundfallflag=FALSE,soundfallf=FALSE;
-Sint4 soundfallvalue,soundfalln=0;
+short soundfallvalue,soundfalln=0;
 
 void soundfall(void)
 {
@@ -260,7 +260,7 @@ void soundfallupdate(void)
 
 
 bool soundbreakflag=FALSE;
-Sint4 soundbreakduration=0,soundbreakvalue=0;
+short soundbreakduration=0,soundbreakvalue=0;
 
 void soundbreak(void)
 {
@@ -289,7 +289,7 @@ void soundbreakupdate(void)
 
 
 bool soundwobbleflag=FALSE;
-Sint4 soundwobblen=0;
+short soundwobblen=0;
 
 void soundwobble(void)
 {
@@ -325,7 +325,7 @@ void soundwobbleupdate(void)
 
 
 bool soundfireflag[FIREBALLS]={FALSE,FALSE},sff[FIREBALLS];
-Sint4 soundfirevalue[FIREBALLS],soundfiren[FIREBALLS]={0,0};
+short soundfirevalue[FIREBALLS],soundfiren[FIREBALLS]={0,0};
 int soundfirew=0;
 
 void soundfire(int n)
@@ -371,7 +371,7 @@ void soundfireupdate(void)
 
 
 bool soundexplodeflag[FIREBALLS]={FALSE,FALSE},sef[FIREBALLS];
-Sint4 soundexplodevalue[FIREBALLS],soundexplodeduration[FIREBALLS];
+short soundexplodevalue[FIREBALLS],soundexplodeduration[FIREBALLS];
 int soundexplodew=0;
 
 void soundexplode(int n)
@@ -416,7 +416,7 @@ void soundexplodeupdate(void)
 
 
 bool soundbonusflag=FALSE;
-Sint4 soundbonusn=0;
+short soundbonusn=0;
 
 void soundbonus(void)
 {
@@ -465,9 +465,9 @@ void soundemupdate(void)
 
 
 bool soundemeraldflag=FALSE;
-Sint4 soundemeraldduration,emerfreq,soundemeraldn;
+short soundemeraldduration,emerfreq,soundemeraldn;
 
-Sint4 emfreqs[8]={0x8e8,0x7f0,0x712,0x6ac,0x5f2,0x54c,0x4b8,0x474};
+short emfreqs[8]={0x8e8,0x7f0,0x712,0x6ac,0x5f2,0x54c,0x4b8,0x474};
 
 void soundemerald(int n)
 {
@@ -501,7 +501,7 @@ void soundemeraldupdate(void)
 
 
 bool soundgoldflag=FALSE,soundgoldf=FALSE;
-Sint4 soundgoldvalue1,soundgoldvalue2,soundgoldduration;
+short soundgoldvalue1,soundgoldvalue2,soundgoldduration;
 
 void soundgold(void)
 {
@@ -540,7 +540,7 @@ void soundgoldupdate(void)
 
 
 bool soundeatmflag=FALSE;
-Sint4 soundeatmvalue,soundeatmduration,soundeatmn;
+short soundeatmvalue,soundeatmduration,soundeatmn;
 
 void soundeatm(void)
 {
@@ -580,7 +580,7 @@ void soundeatmupdate(void)
 
 
 bool soundddieflag=FALSE;
-Sint4 soundddien,soundddievalue;
+short soundddien,soundddievalue;
 
 void soundddie(void)
 {
@@ -612,7 +612,7 @@ void soundddieupdate(void)
 
 
 bool sound1upflag=FALSE;
-Sint4 sound1upduration=0;
+short sound1upduration=0;
 
 void sound1up(void)
 {
@@ -638,11 +638,11 @@ void sound1upupdate(void)
 
 
 bool musicplaying=FALSE;
-Sint4 musicp=0,tuneno=0,noteduration=0,notevalue=0,musicmaxvol=0,
+short musicp=0,tuneno=0,noteduration=0,notevalue=0,musicmaxvol=0,
       musicattackrate=0,musicsustainlevel=0,musicdecayrate=0,musicnotewidth=0,
       musicreleaserate=0,musicstage=0,musicn=0;
 
-void music(Sint4 tune)
+void music(short tune)
 {
   tuneno=tune;
   musicp=0;
@@ -680,7 +680,7 @@ void musicoff(void)
   musicp=0;
 }
 
-Sint4 bonusjingle[321]={
+short bonusjingle[321]={
   0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,
    0xd59,4, 0xbe4,4, 0xa98,4,0x11d1,2,0x11d1,2,0x11d1,4,0x11d1,2,0x11d1,2,
   0x11d1,4, 0xd59,2, 0xa98,2, 0xbe4,4, 0xe24,4,0x11d1,4,0x11d1,2,0x11d1,2,
@@ -703,7 +703,7 @@ Sint4 bonusjingle[321]={
    0x7f0,4, 0xa98,4, 0x7f0,4, 0x8e8,4, 0x970,4, 0x8e8,4, 0x970,4, 0x8e8,4,
   0x7d64};
 
-Sint4 backgjingle[291]={
+short backgjingle[291]={
    0xfdf,2,0x11d1,2, 0xfdf,2,0x1530,2,0x1ab2,2,0x1530,2,0x1fbf,4, 0xfdf,2,
   0x11d1,2, 0xfdf,2,0x1530,2,0x1ab2,2,0x1530,2,0x1fbf,4, 0xfdf,2, 0xe24,2,
    0xd59,2, 0xe24,2, 0xd59,2, 0xfdf,2, 0xe24,2, 0xfdf,2, 0xe24,2,0x11d1,2,
@@ -724,7 +724,7 @@ Sint4 backgjingle[291]={
    0x970,2, 0xa98,2, 0x970,2, 0xbe4,2, 0xa98,2, 0xbe4,2, 0xd59,2, 0xbe4,2,
    0xa98,4,0x7d64};
 
-Sint4 dirge[]={
+short dirge[]={
   0x7d00, 2,0x11d1, 6,0x11d1, 4,0x11d1, 2,0x11d1, 6, 0xefb, 4, 0xfdf, 2,
    0xfdf, 4,0x11d1, 2,0x11d1, 4,0x12e0, 2,0x11d1,12,0x7d00,16,0x7d00,16,
   0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,0x7d00,16,

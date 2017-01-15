@@ -9,26 +9,26 @@
 #include <string.h>
 #include <keyboard.h>
 
-extern Uint3 *vgatable[];
-extern Uint3 *ascii2vga[];
+extern unsigned char *vgatable[];
+extern unsigned char *ascii2vga[];
 extern void gettitle(unsigned char *buf);
 
-Uint3 **sprites = vgatable;
-Uint3 **alphas = ascii2vga;
+unsigned char **sprites = vgatable;
+unsigned char **alphas = ascii2vga;
 
-Sint4 xratio = 2;
-Sint4 yratio = 2;
-Sint4 yoffset = 0;
-Sint4 hratio = 2;
-Sint4 wratio = 2;
+short xratio = 2;
+short yratio = 2;
+short yoffset = 0;
+short hratio = 2;
+short wratio = 2;
 #define virt2scrx(x) (x*xratio)
 #define virt2scry(y) (y*yratio+yoffset)
 #define virt2scrw(w) (w*wratio)
 #define virt2scrh(h) (h*hratio)
 
 #define KBLEN		30
-Sint4 kbuffer[KBLEN];
-Sint4 klen=0;
+short kbuffer[KBLEN];
+short klen=0;
 
 typedef struct _sdl_surface {
   int w;
@@ -66,7 +66,7 @@ SDL_Color vga16_pal2i[] = \
 
 SDL_Color *npalettes[] = {vga16_pal1, vga16_pal2};
 SDL_Color *ipalettes[] = {vga16_pal1i, vga16_pal2i};
-Sint4	currpal=0;
+short	currpal=0;
 
 typedef struct _myrect {
   unsigned short int x;
@@ -75,7 +75,7 @@ typedef struct _myrect {
   unsigned short int h;
 } SDL_Rect;
 
-SDL_Surface *createsurface(Sint4 w, Sint4 h) {
+SDL_Surface *createsurface(short w, short h) {
   SDL_Surface *tmp;
 
   //  printf("createsurface(%d, %d)\n", w, h);
@@ -95,9 +95,9 @@ void freesurface(SDL_Surface *s) {
   free(s);
 }
 
-SDL_Surface *ch2bmap(Uint3 *sprite, Sint4 w, Sint4 h)
+SDL_Surface *ch2bmap(unsigned char *sprite, short w, short h)
 {
-  Sint4 realw, realh;
+  short realw, realh;
   SDL_Surface *tmp;
   
   realw = virt2scrw(w*4);
@@ -135,9 +135,9 @@ void restorekeyb(void)
 {
 }
 
-Sint4 getkey(void)
+short getkey(void)
 {
-	Sint4 result;
+	short result;
 	
 	while(kbhit() != TRUE)
 		gethrt();
@@ -161,17 +161,17 @@ void inittimer(void)
 {
 }
 
-Sint5 getlrt(void)
+long getlrt(void)
 {
 	return(0);
 }
 
-Uint5 gethrt(void)
+unsigned long gethrt(void)
 {
 	return(0);
 }
 
-Sint5 getkips(void)
+long getkips(void)
 {
 	return(1);
 }
@@ -181,10 +181,10 @@ void vgainit() {
   printf("Digger\n");
 }
 
-void vgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
+void vgawrite(short x, short y, short ch, short c)
 {
   SDL_Surface *tmp;
-  Sint4 w=3, h=12, size;
+  short w=3, h=12, size;
 
   if (((ch-32) >= 0x5f) || (ch < 32))
     return;
@@ -210,7 +210,7 @@ void vgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
       }
   }
 
-  vgaputi(x,y, (Uint3 *)&tmp, w, h);
+  vgaputi(x,y, (unsigned char *)&tmp, w, h);
   freesurface(tmp);
 }
 
@@ -218,29 +218,29 @@ void vgatitle(void)
 {
   SDL_Surface *tmp = NULL;
   
-  vgageti(0,0, (Uint3 *)&tmp, 80, 200);
+  vgageti(0,0, (unsigned char *)&tmp, 80, 200);
   gettitle(tmp->pixels);
-  vgaputi(0,0, (Uint3 *)&tmp, 80, 200);
+  vgaputi(0,0, (unsigned char *)&tmp, 80, 200);
   freesurface(tmp);
 }
 
-Sint4 vgagetpix(Sint4 x, Sint4 y)
+short vgagetpix(short x, short y)
 {
   return 1;
 }
 
-void vgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
+void vgaputim(short x, short y, short ch, short w, short h)
 {
   SDL_Surface *tmp;
   SDL_Surface *mask;
   SDL_Surface *scr = NULL;
   unsigned char *tmp_pxl, *mask_pxl, *scr_pxl;
-  Sint4 realsize;
-  Sint4 i;
+  short realsize;
+  short i;
 
   tmp = ch2bmap(sprites[ch*2], w, h); // grab the bitmap tile
   mask = ch2bmap(sprites[ch*2+1], w, h); // grab the mask for the bitmap
-  vgageti(x,y, (Uint3 *)&scr, w, h); // grab what's ont he screen currently
+  vgageti(x,y, (unsigned char *)&scr, w, h); // grab what's ont he screen currently
   realsize = scr->w*scr->h;
   tmp_pxl = (unsigned char *)tmp->pixels;
   mask_pxl = (unsigned char *)mask->pixels;
@@ -250,7 +250,7 @@ void vgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
   for(i=0;i<realsize;i++)
     if(tmp_pxl[i] != 0xff)
       scr_pxl[i] = (scr_pxl[i] & mask_pxl[i]) | tmp_pxl[i];
-  vgaputi(x,y, (Uint3 *)&scr, w, h);
+  vgaputi(x,y, (unsigned char *)&scr, w, h);
   freesurface(tmp);
   freesurface(mask);
   freesurface(scr);
@@ -272,7 +272,7 @@ void blittofb(SDL_Rect *bb, unsigned char *from) {
   }
 }
 
-void vgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
+void vgageti(short x, short y, unsigned char *p, short w, short h)
 {
   SDL_Surface *tmp;
   SDL_Rect src;
@@ -294,7 +294,7 @@ void vgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
   memcpy(p, &tmp, (sizeof(SDL_Surface *)));
 }
 
-void vgaputi(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
+void vgaputi(short x, short y, unsigned char *p, short w, short h)
 {
   SDL_Surface *tmp;
   SDL_Rect src;
@@ -326,7 +326,7 @@ void setpal(SDL_Color *pal)
   
 }
 
-void vgainten(Sint4 inten)
+void vgainten(short inten)
 {
   if(inten == 1)
     setpal(ipalettes[currpal]);
@@ -334,7 +334,7 @@ void vgainten(Sint4 inten)
     setpal(npalettes[currpal]);
 }
 
-void vgapal(Sint4 pal)
+void vgapal(short pal)
 {
   setpal(npalettes[pal]);
   currpal = pal;
@@ -365,19 +365,19 @@ void s0setspkrt2(void)
 {
 }
 
-void s0settimer0(Uint4 t0v)
+void s0settimer0(unsigned short t0v)
 {
 }
 
-void s0settimer2(Uint4 t0v)
+void s0settimer2(unsigned short t0v)
 {
 }
 
-void s0timer0(Uint4 t0v)
+void s0timer0(unsigned short t0v)
 {
 }
 
-void s0timer2(Uint4 t0v)
+void s0timer2(unsigned short t0v)
 {
 }
 
@@ -390,7 +390,7 @@ bool initsounddevice(void)
 	return TRUE;
 }
 
-bool setsounddevice(int base, int irq, int dma, Uint4 samprate, Uint4 bufsize)
+bool setsounddevice(int base, int irq, int dma, unsigned short samprate, unsigned short bufsize)
 {
   return TRUE;
 }
@@ -408,12 +408,12 @@ void gretrace(void) {}
 void cgainit(void) {}
 void cgaclear(void) {}
 void cgatitle(void) {}
-void cgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c) {}
-void cgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h) {}
-void cgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h) {}
-void cgaputi(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h) {}
-void cgapal(Sint4 pal) {}
-void cgainten(Sint4 inten) {}
-Sint4 cgagetpix(Sint4 x, Sint4 y) {return(0);}
+void cgawrite(short x, short y, short ch, short c) {}
+void cgaputim(short x, short y, short ch, short w, short h) {}
+void cgageti(short x, short y, unsigned char *p, short w, short h) {}
+void cgaputi(short x, short y, unsigned char *p, short w, short h) {}
+void cgapal(short pal) {}
+void cgainten(short inten) {}
+short cgagetpix(short x, short y) {return(0);}
 void graphicsoff(void) {}
 

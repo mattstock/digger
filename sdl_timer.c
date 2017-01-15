@@ -5,21 +5,21 @@
 #include "sdl_vid.h"
 #endif
 
-Uint32 prev = 0;
-extern Uint5 ftime;
+unsigned char2 prev = 0;
+extern unsigned long ftime;
 
 void inittimer(void)
 {
 }
 
-Sint5 getlrt(void)
+long getlrt(void)
 {
 	return(0);
 }
 
-Uint5 gethrt(void)
+unsigned long gethrt(void)
 {
-	Sint32 diff;
+	char2 diff;
 
 	doscreenupdate();
 
@@ -36,7 +36,7 @@ Uint5 gethrt(void)
 	return(0);
 }
 
-Sint5 getkips(void)
+long getkips(void)
 {
 	return(1);
 }
@@ -65,19 +65,19 @@ void s0setspkrt2(void)
 {
 }
 
-void s0settimer0(Sint4 t0v)
+void s0settimer0(short t0v)
 {
 }
 
-void s0settimer2(Sint4 t0v)
+void s0settimer2(short t0v)
 {
 }
 
-void s0timer0(Sint4 t0v)
+void s0timer0(short t0v)
 {
 }
 
-void s0timer2(Sint4 t0v)
+void s0timer2(short t0v)
 {
 }
 
