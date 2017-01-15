@@ -36,6 +36,7 @@ void outtext(char *p,Sint4 x,Sint4 y,Sint4 c)
 {
   Sint4 i;
   for (i=0;p[i];i++) {
+    printf("gwrite(%d, %d, %c)\n", x, y, p[i]);
     gwrite(x,y,p[i],c);
     x+=12;
   }

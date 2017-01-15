@@ -322,7 +322,6 @@ int main(int argc,char *argv[])
 int mainprog(void)
 {
   Sint4 frame,t,x;
-  printf("starting loadscores()\n");
   loadscores();
 #ifdef _WINDOWS
   show_main_menu();
@@ -330,10 +329,8 @@ int mainprog(void)
   escape=FALSE;
   do {
     soundstop();
-    printf("starting creatembspr()\n");
     creatembspr();
-    //    detectjoy();
-    printf("starting gclear()\n");
+    detectjoy();
     gclear();
     gtitle();
     outtext("D I G G E R",100,0,3);

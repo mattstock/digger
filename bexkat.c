@@ -77,6 +77,8 @@ typedef struct _myrect {
 
 SDL_Surface *createsurface(Sint4 w, Sint4 h) {
   SDL_Surface *tmp;
+
+  //  printf("createsurface(%d, %d)\n", w, h);
   
   if (w <= 0 || h <= 0)
     return NULL;
@@ -101,8 +103,13 @@ SDL_Surface *ch2bmap(Uint3 *sprite, Sint4 w, Sint4 h)
   realw = virt2scrw(w*4);
   realh = virt2scrh(h);
   tmp = createsurface(realw, realh);
-  /* TODO :copy the sprite info into the surface */
-  
+  for (int y=0; y < realh; y++) {
+    for (int x=0; x < realw; x++) {
+      tmp->pixels[y*realw+x] = sprite[y*realw+x];
+    }
+  }
+  printf("\n");
+    
   return tmp;
 }
 
@@ -203,6 +210,7 @@ void vgawrite(Sint4 x, Sint4 y, Sint4 ch, Sint4 c)
 	  tmp->pixels[i] = 6;
       }
   }
+
   vgaputi(x,y, (Uint3 *)&tmp, w, h);
   freesurface(tmp);
 }
@@ -250,30 +258,37 @@ void vgaputim(Sint4 x, Sint4 y, Sint4 ch, Sint4 w, Sint4 h)
 }
 
 void blitfromfb(SDL_Rect *bb, unsigned char *to) {
-  for (int x=0; x < bb->w; x++)
-    for (int y=0; y < bb->h; y++)
-      to[y*bb->w+x] = vga_fb[(bb->y+y)+bb->x+x];
+  for (int x=0; x < bb->w; x++) {
+    for (int y=0; y < bb->h; y++) {
+      to[y*bb->w+x] = vga_fb[(bb->y+y)*VGA_MAX_X+bb->x+x];
+    }
+  }
 }
 
 void blittofb(SDL_Rect *bb, unsigned char *from) {
-  for (int x=0; x < bb->w; x++)
-    for (int y=0; y < bb->h; y++)
-      vga_fb[(bb->y+y)+bb->x+x] = from[y*bb->w+x];
+  for (int x=0; x < bb->w; x++) {
+    for (int y=0; y < bb->h; y++) {
+      vga_fb[(bb->y+y)*VGA_MAX_X+bb->x+x] = from[y*bb->w+x];
+    }
+  }
 }
 
 void vgageti(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
 {
   SDL_Surface *tmp;
   SDL_Rect src;
-  
-  memcpy(&tmp, p, (sizeof(SDL_Surface *)));
-  if (tmp != NULL)
-    freesurface(tmp);
 
-  src.x = x;
-  src.y = y;
-  src.h = h;
-  src.w = w*4;
+  printf("vgageti(%d, %d, %d, %d)\n", x, y, w, h);
+  memcpy(&tmp, p, (sizeof(SDL_Surface *)));
+  if (tmp != NULL) {
+    printf("given a non-NULL reference\n");
+    freesurface(tmp);
+  }
+
+  src.x = virt2scrx(x);
+  src.y = virt2scry(y);
+  src.h = virt2scrh(h);
+  src.w = virt2scrw(w*4);
   
   tmp = createsurface(src.w, src.h);
   blitfromfb(&src, tmp->pixels);
@@ -285,10 +300,12 @@ void vgaputi(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
   SDL_Surface *tmp;
   SDL_Rect src;
 
-  src.x = x;
-  src.y = y;
-  src.h = h;
-  src.w = w*4;
+  //  printf("vgaputi(%d, %d, %d, %d)\n", x, y, w, h);
+  
+  src.x = virt2scrx(x);
+  src.y = virt2scry(y);
+  src.h = virt2scrh(h);
+  src.w = virt2scrw(w*4);
   
   memcpy(&tmp, p, (sizeof(SDL_Surface *)));
   blittofb(&src, tmp->pixels);
@@ -296,7 +313,7 @@ void vgaputi(Sint4 x, Sint4 y, Uint3 *p, Sint4 w, Sint4 h)
 
 void vgaclear(void)
 {
-  for (int a=0; a < VGA_MAX_X*VGA_MAX_Y/4; a++)
+  for (int a=0; a < VGA_MAX_X*VGA_MAX_Y; a++)
     vga_fb[a] = 0;
 }
 
@@ -306,6 +323,8 @@ void setpal(SDL_Color *pal)
     unsigned int c = (pal[i].r << 16) | (pal[i].g << 8) | pal[i].b;
     vga_palette(0, i, c);
   }
+  vga_palette(0, 16, 0xffffff);
+  
 }
 
 void vgainten(Sint4 inten)
