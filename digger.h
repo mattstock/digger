@@ -27,8 +27,8 @@ void initlives(void);
 void declife(int pl);
 
 extern bool bonusvisible,digonscr,bonusmode;
-extern unsigned long ftime,curtime,cgtime;
+extern unsigned int ftime,curtime,cgtime;
 
 #ifdef INTDRF
-extern unsigned long frame;
+extern unsigned int frame;
 #endif

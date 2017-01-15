@@ -807,7 +807,7 @@ void parsecmd(int argc,char *argv[])
   }
 }
 
-long randv;
+unsigned int randv;
 
 short randno(short n)
 {

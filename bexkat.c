@@ -161,17 +161,17 @@ void inittimer(void)
 {
 }
 
-long getlrt(void)
+int getlrt(void)
 {
 	return(0);
 }
 
-unsigned long gethrt(void)
+unsigned int gethrt(void)
 {
 	return(0);
 }
 
-long getkips(void)
+int getkips(void)
 {
 	return(1);
 }

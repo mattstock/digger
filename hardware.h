@@ -1,8 +1,8 @@
 void olddelay(short t);
-long getkips(void);
+int getkips(void);
 void inittimer(void);
-unsigned long gethrt(void);
-long getlrt(void);
+unsigned int gethrt(void);
+int getlrt(void);
 
 void s0initint8(void);
 void s0restoreint8(void);

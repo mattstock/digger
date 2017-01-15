@@ -14,7 +14,7 @@ extern short nplayers,diggers,curplayer,startlev;
 extern bool levfflag;
 extern char levfname[];
 extern char pldispbuf[];
-extern long randv;
+extern unsigned int randv;
 extern char leveldat[8][10][15];
 extern int gtime;
 extern bool gauntlet,timeout,synchvid,unlimlives;

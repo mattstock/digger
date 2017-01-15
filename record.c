@@ -31,7 +31,7 @@ bool playing=FALSE,savedrf=FALSE,gotname=FALSE,gotgame=FALSE,drfvalid=TRUE,
 char rname[128];
 
 int reccc=0,recrl=0,rlleft=0;
-unsigned long recp=0;
+unsigned int recp=0;
 char recd,rld;
 
 void mprintf(char *f,...);
@@ -51,7 +51,7 @@ FILE *info;
 void openplay(char *name)
 {
   FILE *playf=fopen(name,"rt");
-  long l,i;
+  int l,i;
   char c,buf[80];
   int x,y,n,origgtime=gtime;
   bool origg=gauntlet;
@@ -158,14 +158,14 @@ void openplay(char *name)
 void recstart(void)
 {
 #if defined FLATFILE || defined WIN16
-  unsigned long s=MAX_REC_BUFFER;
+  unsigned int s=MAX_REC_BUFFER;
   do {
     recb=(char huge *)farmalloc(s);
     if (recb==NULL)
       s>>=1;
   } while (recb==(char huge *)NULL && s>1024);
 #else
-  unsigned long s=farcoreleft();
+  unsigned int s=farcoreleft();
   if (s>MAX_REC_BUFFER)
     s=MAX_REC_BUFFER;
   recb=(char huge *)farmalloc(s);
@@ -326,7 +326,7 @@ void recinit(void)
   reccc=recrl=0;
 }
 
-void recputrand(unsigned long randv)
+void recputrand(unsigned int randv)
 {
 #ifndef BEXKAT
   mprintf("%08lX\n",randv);
@@ -338,7 +338,7 @@ void recsavedrf(void)
 {
 #ifndef BEXKAT
   FILE *recf;
-  unsigned long i;
+  unsigned int i;
   int j;
   bool gotfile=TRUE;
   char nambuf[80],init[4];
@@ -394,21 +394,21 @@ void playskipeol(void)
   plp+=3;
 }
 
-unsigned long playgetrand(void)
+unsigned int playgetrand(void)
 {
   int i;
-  unsigned long r=0;
+  unsigned int r=0;
   char p;
   if ((*plp)=='*')
     plp+=4;
   for (i=0;i<8;i++) {
     p=*(plp++);
     if (p>='0' && p<='9')
-      r|=(unsigned long)(p-'0')<<((7-i)<<2);
+      r|=(unsigned int)(p-'0')<<((7-i)<<2);
     if (p>='A' && p<='F')
-      r|=(unsigned long)(p-'A'+10)<<((7-i)<<2);
+      r|=(unsigned int)(p-'A'+10)<<((7-i)<<2);
     if (p>='a' && p<='f')
-      r|=(unsigned long)(p-'a'+10)<<((7-i)<<2);
+      r|=(unsigned int)(p-'a'+10)<<((7-i)<<2);
   }
   return r;
 }

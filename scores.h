@@ -19,6 +19,6 @@ long getscore0(void);
 #endif
 
 extern unsigned short bonusscore;
-extern long scoret;
+extern unsigned int scoret;
 
 extern char scoreinit[11][4];

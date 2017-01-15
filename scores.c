@@ -18,16 +18,16 @@
 
 struct scdat
 {
-  long score,nextbs;
+  unsigned int score,nextbs;
 } scdat[DIGGERS];
 
 char highbuf[10];
 
-long scorehigh[12]={0,0,0,0,0,0,0,0,0,0,0,0};
+unsigned int scorehigh[12]={0,0,0,0,0,0,0,0,0,0,0,0};
 
 char scoreinit[11][4];
 
-long scoret=0;
+unsigned int scoret=0;
 
 char hsbuf[36];
 
@@ -44,8 +44,8 @@ void getinitials(void);
 void flashywait(short n);
 short getinitial(short x,short y);
 void shufflehigh(void);
-void writenum(long n,short x,short y,short w,short c);
-void numtostring(char *p,long n);
+void writenum(unsigned int n,short x,short y,short w,short c);
+void numtostring(char *p,unsigned int n);
 
 #ifdef ARM
 
@@ -417,7 +417,7 @@ void scoreeatm(int n,int msc)
   addscore(n,msc*200);
 }
 
-void writenum(long n,short x,short y,short w,short c)
+void writenum(unsigned int n,short x,short y,short w,short c)
 {
   short d,xp=(w-1)*12+x;
   while (w>0) {
@@ -430,7 +430,7 @@ void writenum(long n,short x,short y,short w,short c)
   }
 }
 
-void numtostring(char *p,long n)
+void numtostring(char *p,unsigned int n)
 {
   int x;
   for (x=0;x<6;x++) {

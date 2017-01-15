@@ -69,10 +69,10 @@ void initdigger(void)
   bonusvisible=bonusmode=FALSE;
 }
 
-unsigned long curtime,ftime;
+unsigned int curtime,ftime;
 
 #ifdef INTDRF
-unsigned long frame;
+unsigned int frame;
 #endif
 
 void newframe(void)
@@ -80,7 +80,7 @@ void newframe(void)
 
 #ifndef ARM
 
-  unsigned long t;
+  unsigned int t;
   if (synchvid) {
     for (;curtime<ftime;curtime+=17094) { /* 17094 = ticks in a refresh */
 #ifdef _WINDOWS
@@ -123,7 +123,7 @@ void newframe(void)
 
 }
 
-unsigned long cgtime;
+unsigned int cgtime;
 
 void drawdig(int n,int d,int x,int y,bool f)
 {
