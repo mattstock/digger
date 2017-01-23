@@ -32,7 +32,7 @@ endif
 ifeq ($(ARCH),"BEXKAT")
 CC	= bexkat1-elf-gcc
 CFLAGS	+= -DUNIX -DBEXKAT --specs=de2.specs -I../zlib-1.2.10
-LIBS	+= -L../zlib-1.2.10 -lsupport -lextras -lz
+LIBS	+= -L../zlib-1.2.10 -lsupport -lz
 ESUFFIX	=
 endif
 
